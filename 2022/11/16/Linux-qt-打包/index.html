@@ -16,7 +16,7 @@
 <meta property="og:description" content="在linux 系统中使用linuxdeployqt打包开发的应用程序，解决系统中存在多个qt版本的问题。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-11-16T03:32:00.000Z">
-<meta property="article:modified_time" content="2022-11-16T05:48:34.340Z">
+<meta property="article:modified_time" content="2022-11-16T05:52:07.998Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
@@ -186,7 +186,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-b 6 表示 版本号</span><br><span class="line">git <span class="built_in">clone</span> -b 6 https://gitee.com/yangfanimb/linuxdeployqt.git</span><br></pre></td></tr></table></figure>
 
 <blockquote>
-<p>2、设置qt环境变量</p>
+<p>2、编译<code>linuxdeployqt</code></p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=$(<span class="built_in">readlink</span> -f /usr/lib/aarch64-linux-gnu/qt5/bin/):<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">cd</span> linuxdeployqt</span><br><span class="line">qmake</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
 <pre><code>执行完将bin/linuxdeployqt 拷贝到/usr/local/bin
