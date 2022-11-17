@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2022-11-16T05:52:07.998Z</updated>
+  <updated>2022-11-17T08:17:02.382Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>树莓派配置smb共享服务</title>
+    <link href="https://yesir.github.io/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/"/>
+    <id>https://yesir.github.io/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/</id>
+    <published>2022-11-17T08:04:49.000Z</published>
+    <updated>2022-11-17T08:17:02.382Z</updated>
+    
+    <content type="html"><![CDATA[<p>树莓派3B+配置smb共享服务，方便在windows上访问树莓派硬盘文件.</p><span id="more"></span><blockquote><p>首先、配置树莓派源为阿里源</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/apt/sources.list</span><br><span class="line"></span><br><span class="line">deb http://mirrors.aliyun.com/raspbian/raspbian/ stretch main contrib non-free rpi</span><br></pre></td></tr></table></figure><blockquote><p>2、更新源仓库信息</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">如果有需要</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure><blockquote><p>3、安装smb服务</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install samba-common-bin</span><br><span class="line"></span><br><span class="line">sudo apt-get install samba</span><br></pre></td></tr></table></figure><blockquote><p>4、修改配置文件</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">/etc/samba/smb.conf</span><br><span class="line"></span><br><span class="line">如果需要创建用户，可以单独设置用户访问配置，如创建smbpi用户</span><br><span class="line"></span><br><span class="line">[smbpi]</span><br><span class="line">path = /home/smbpi/</span><br><span class="line">valid <span class="built_in">users</span> = smbpi</span><br><span class="line">browseable = Yes    <span class="comment"># 是否启用网络发现</span></span><br><span class="line">writeable = Yes</span><br><span class="line">writelist = smbpi</span><br><span class="line">create mask = 0777</span><br><span class="line">directory mask = 0777</span><br><span class="line"></span><br><span class="line">保存配置后为smbpi用户设置密码</span><br><span class="line">smbpasswd -a smbpi</span><br><span class="line"></span><br><span class="line">如果不需要用户，可在配置文件中添加public段</span><br><span class="line"></span><br><span class="line">[public]</span><br><span class="line">comment = public folder</span><br><span class="line">path = /data    <span class="comment"># public访问路径</span></span><br><span class="line"><span class="built_in">read</span> only = no</span><br><span class="line">public = <span class="built_in">yes</span></span><br><span class="line">browseable = <span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line">保存配置然后重启smb服务</span><br><span class="line">sudo systemctl restart smbd</span><br><span class="line"></span><br><span class="line">添加开机启动</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> smbd</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;树莓派3B+配置smb共享服务，方便在windows上访问树莓派硬盘文件.&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="运维" scheme="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux qt 打包</title>
@@ -375,25 +394,6 @@
     
     
     <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>在同一个进程中使用不同版本的opencv</title>
-    <link href="https://yesir.github.io/2021/12/15/%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84opencv/"/>
-    <id>https://yesir.github.io/2021/12/15/%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B%E4%B8%AD%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84opencv/</id>
-    <published>2021-12-15T11:04:35.000Z</published>
-    <updated>2021-12-16T10:45:54.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>封装好了2个动态库文件，都使用了<code>opencv</code>，但是<code>opencv</code>使用的版本确不相同</p><span id="more"></span><h2 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h2><p>1、确定好每个动态库的依赖的<code>opencv</code>, 将其中一套<code>opencv</code>链接成其它的名字加以区分</p><p>2、将低版本的<code>opencv</code>, 链接在高版本之前</p><h1 id="linux-dmidecode查看服务器硬件信息"><a href="#linux-dmidecode查看服务器硬件信息" class="headerlink" title="linux dmidecode查看服务器硬件信息"></a><code>linux dmidecode</code>查看服务器硬件信息</h1><p><code>linux</code>中<code>dmidecode</code>的作用是将<code>DMI</code>数据库中的信息解码，以可读的文本方式显示，该命令可以查询BIOS、系统、主板、处理器、内存、缓存等非常重要信息。由于<code>DMI</code>信息可以人为修改，因此里面的信息不一定是系统准确的信息。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">参数</span><br><span class="line">-t   只显示指定条目的信息</span><br><span class="line"></span><br><span class="line">-s   只显示指定DMI字符串关键字的信息</span><br><span class="line"></span><br><span class="line">-d   从设备文件读信息，输出内容与不加参数标准输出相同</span><br><span class="line"></span><br><span class="line">-h   显示帮助信息</span><br><span class="line"></span><br><span class="line">-q   显示更少的简化信息</span><br><span class="line"></span><br><span class="line">-u   显示未解码的原始条目内容</span><br><span class="line"></span><br><span class="line">-V   显示版本信息</span><br><span class="line"></span><br><span class="line">实例</span><br><span class="line"><span class="comment"># dmidecode | grep &#x27;Product Name&#x27;                    // 查看服务器型号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode | grep &#x27;Serial Number&#x27;                   // 查看主板的序列号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode -s system-serial-number                  // 查看系统序列号</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode -t memory                                // 查看内存信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode -t 11                                    // 查看OEM信息</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode | grep -A16 &quot;Memory Device&quot; | grep &quot;Size&quot; |sed &#x27;s/^[ \t]*//&#x27;  // 现有内存数量和内存大小</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dmidecode | grep &quot;Maximum Capacity&quot; |sed  &quot;s/^[ \t]*//&quot;                       // 最大支持内存容量：</span></span><br></pre></td></tr></table></figure><h2 id="查看摄像头信息"><a href="#查看摄像头信息" class="headerlink" title="查看摄像头信息"></a>查看摄像头信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsusb -v |grep -Ei <span class="string">&#x27;(idVendor|CAM)&#x27;</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;封装好了2个动态库文件，都使用了&lt;code&gt;opencv&lt;/code&gt;，但是&lt;code&gt;opencv&lt;/code&gt;使用的版本确不相同&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="随笔" scheme="https://yesir.github.io/tags/%E9%9A%8F%E7%AC%94/"/>
     
   </entry>
   
