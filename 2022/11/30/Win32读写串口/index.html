@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="https://yesir.github.io">
   <title>Win32读写串口 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="使用CreateFile系统函数读写串口">
+  <meta name="description" content="使用CreateFile系列函数读写串口">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Win32读写串口">
 <meta property="og:url" content="https://yesir.github.io/2022/11/30/Win32%E8%AF%BB%E5%86%99%E4%B8%B2%E5%8F%A3/index.html">
 <meta property="og:site_name" content="随笔">
-<meta property="og:description" content="使用CreateFile系统函数读写串口">
+<meta property="og:description" content="使用CreateFile系列函数读写串口">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-11-30T07:46:52.000Z">
-<meta property="article:modified_time" content="2022-11-30T07:53:57.875Z">
+<meta property="article:modified_time" content="2022-11-30T07:56:07.954Z">
 <meta property="article:author" content="yesir">
 <meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
@@ -175,7 +175,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>使用<code>CreateFile</code>系统函数读写串口</p>
+        <p>使用<code>CreateFile</code>系列函数读写串口</p>
 <span id="more"></span>
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pragma once</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &lt;Windows.h&gt;</span></span><br><span class="line"></span><br><span class="line">class SerialPort </span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	SerialPort();</span><br><span class="line">	~SerialPort();</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line">    bool open(unsigned int port, unsigned int baudrate, char parity = <span class="string">&#x27;N&#x27;</span>, unsigned int databits = 8, unsigned int stopsbits = 1);</span><br><span class="line">    void close();</span><br><span class="line">    int write(char *data, int size );</span><br><span class="line">    int <span class="built_in">read</span>(char *data, int size );</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    HANDLE m_com;  </span><br><span class="line">    COMMTIMEOUTS m_timeouts;</span><br><span class="line">    DCB m_dcb;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
