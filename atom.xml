@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2022-11-30T07:56:07.954Z</updated>
+  <updated>2022-12-02T08:00:00.355Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Win32无窗口使用定时器</title>
+    <link href="https://yesir.github.io/2022/12/02/Win32%E6%97%A0%E7%AA%97%E5%8F%A3%E4%BD%BF%E7%94%A8%E5%AE%9A%E6%97%B6%E5%99%A8/"/>
+    <id>https://yesir.github.io/2022/12/02/Win32%E6%97%A0%E7%AA%97%E5%8F%A3%E4%BD%BF%E7%94%A8%E5%AE%9A%E6%97%B6%E5%99%A8/</id>
+    <published>2022-12-02T07:58:29.000Z</published>
+    <updated>2022-12-02T08:00:00.355Z</updated>
+    
+    <content type="html"><![CDATA[<p>使用<code>timeSetEvent</code>系列函数</p><span id="more"></span><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;Windows.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;Mmsystem.h&gt;</span></span><br><span class="line"><span class="comment">#pragma comment(lib, &quot;Winmm.lib&quot;)</span></span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">void WINAPI OnTimeFunc(UINT wTimerID, UINT msg,DWORD dwUser,DWORD dwl,DWORD dw2)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;OnTimeFunc\n&quot;</span>);</span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line">int main(int argc, char * argv[])</span><br><span class="line">&#123;</span><br><span class="line">MMRESULT timer_id;</span><br><span class="line">timer_id = timeSetEvent(1000, 1, (LPTIMECALLBACK)OnTimeFunc, DWORD(1), TIME_PERIODIC);</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span>(NULL == timer_id)</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;timeSetEvent error!--code:0x%x\n&quot;</span>,GetLastError());</span><br><span class="line"><span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;input any key KillTimer!\n&quot;</span>);</span><br><span class="line">getchar();</span><br><span class="line">timeKillEvent(timer_id); //释放定时器</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;input any key Exit!\n&quot;</span>);</span><br><span class="line"><span class="built_in">return</span> 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;使用&lt;code&gt;timeSetEvent&lt;/code&gt;系列函数&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
+    
+  </entry>
   
   <entry>
     <title>Win32读写串口</title>
@@ -372,25 +391,6 @@
     
     
     <summary type="html">&lt;p&gt; 使用&lt;code&gt;QNetworkAccessManager&lt;/code&gt;,使用时在&lt;code&gt;.pro&lt;/code&gt;文件添加&lt;code&gt;QT += network&lt;/code&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>矩阵与向量相乘</title>
-    <link href="https://yesir.github.io/2021/12/26/%E7%9F%A9%E9%98%B5%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%B9%98/"/>
-    <id>https://yesir.github.io/2021/12/26/%E7%9F%A9%E9%98%B5%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%B9%98/</id>
-    <published>2021-12-26T03:08:24.000Z</published>
-    <updated>2021-12-27T10:57:17.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>矩阵与向量相乘</p><span id="more"></span><p><img src="https://pic3.zhimg.com/80/v2-1d69f32e2fa9352f01794fc21275a9e6_720w.jpg?source=1940ef5c"></p><p>1、矩阵与列向量相乘<br>$$<br>\begin{bmatrix}<br>6 \<br>7\<br>\end{bmatrix}</p><ul><li></li></ul><p>\begin{bmatrix}<br>6&amp;2 \<br>7&amp;5\<br>\end{bmatrix}</p><p>=<br>6<br>\begin{bmatrix}<br>6 \<br>7\<br>\end{bmatrix}</p><p>+</p><p>7<br>\begin{bmatrix}<br>2 \<br>5\<br>\end{bmatrix}</p><p>=<br>\begin{bmatrix}<br>6<em>6+2</em>7 \<br>6<em>7+7</em>5\<br>\end{bmatrix}<br>$$<br>2、矩阵与行向量相乘<br>$$<br>\begin{bmatrix}<br>6&amp;7\<br>\end{bmatrix}</p><p>*</p><p>\begin{bmatrix}<br>6&amp;2 \<br>7&amp;5\<br>\end{bmatrix}</p><p>= </p><p>6<br>\begin{bmatrix}<br>6&amp;2\<br>\end{bmatrix}<br>+<br>7<br>\begin{bmatrix}<br>7&amp;5\<br>\end{bmatrix}</p><p>=</p><p>\begin{bmatrix}<br>6<em>6+7</em>7&amp;6<em>2+6</em>5\<br>\end{bmatrix}<br>$$</p>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;矩阵与向量相乘&lt;/p&gt;</summary>
     
     
     
