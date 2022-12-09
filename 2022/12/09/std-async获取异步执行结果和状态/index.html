@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>Archives | 随笔</title>
+  <title>std::async获取异步执行结果和状态 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/archives/page/5/index.html">
+  <meta name="description" content="简单来讲std::async是对std::future、std::promise和std::packaged_task的一个包装，将异步操作用std::packaged_task包装起来，然后将异步操作的结果放到std::promise中,在外层通过std::future.get&#x2F;wait来获取结果。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="std::async获取异步执行结果和状态">
+<meta property="og:url" content="https://yesir.github.io/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="简单来讲std::async是对std::future、std::promise和std::packaged_task的一个包装，将异步操作用std::packaged_task包装起来，然后将异步操作的结果放到std::promise中,在外层通过std::future.get&#x2F;wait来获取结果。">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-12-09T00:44:24.000Z">
+<meta property="article:modified_time" content="2022-12-09T01:07:19.039Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -150,36 +155,71 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-std-async获取异步执行结果和状态" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      std::async获取异步执行结果和状态
+    </h1>
+  
+
+        
+        <a href="/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/" class="archive-article-date">
+  	<time datetime="2022-12-09T00:44:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-09</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>简单来讲<code>std::async</code>是对<code>std::future、std::promise和std::packaged_task</code>的一个包装，将异步操作用<code>std::packaged_task</code>包装起来，然后将异步操作的结果放到<code>std::promise</code>中,在外层通过std::future.get/wait来获取结果。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>函数原型<br>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  std::async(std::launch::async | std::launch::deferred, f, args...)</span><br><span class="line">  第一个参数是线程的创建策略;</span><br><span class="line">std::launch::async：在调用async就开始创建线程</span><br><span class="line">std::launch::deferred：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者<span class="built_in">wait</span>时才创建线程。</span><br><span class="line">  第二个参数是线程函数;</span><br><span class="line">  第三个参数是线程函数的参数;</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>示例</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;iostream&gt;</span></span><br><span class="line"><span class="comment">#include &lt;thread&gt;</span></span><br><span class="line"><span class="comment">#include &lt;future&gt;</span></span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[])</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    std::future&lt;int&gt; f1 = std::async(std::launch::async, []()&#123;</span><br><span class="line">        <span class="built_in">return</span> 1; </span><br><span class="line">    &#125;);</span><br><span class="line"> </span><br><span class="line">    std::cout &lt;&lt; <span class="string">f1.get() &lt;&lt; std::endl; //output: 1</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    std::future&lt;int&gt; f2 = std::async(std::launch::async, []()&#123;</span></span><br><span class="line"><span class="string">        std::cout &lt;&lt; 2 &lt;&lt; std::endl;</span></span><br><span class="line"><span class="string">        return 0;</span></span><br><span class="line"><span class="string">    &#125;);</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    f2.wait(); //output: 2</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    std::future&lt;int&gt; future = std::async(std::launch::async, []()&#123;</span></span><br><span class="line"><span class="string">        std::this_thread::sleep_for(std::chrono::seconds(3));</span></span><br><span class="line"><span class="string">        return 3; </span></span><br><span class="line"><span class="string">    &#125;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">    std::cout &lt;&lt; &quot;waiting...\n&quot;;</span></span><br><span class="line"><span class="string">    std::future_status status;</span></span><br><span class="line"><span class="string">    do &#123;</span></span><br><span class="line"><span class="string">        status = future.wait_for(std::chrono::seconds(1));</span></span><br><span class="line"><span class="string">        if (status == std::future_status::deferred) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;deferred\n&quot;;</span></span><br><span class="line"><span class="string">        &#125; else if (status == std::future_status::timeout) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;timeout\n&quot;;</span></span><br><span class="line"><span class="string">        &#125; else if (status == std::future_status::ready) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;ready!\n&quot;;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125; while (status != std::future_status::ready);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">    std::cout &lt;&lt; &quot;result is &quot; &lt;&lt; future.get() &lt;&lt; &#x27;\n&#x27;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    return 0;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>输出结果</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">waiting...</span><br><span class="line"><span class="built_in">timeout</span></span><br><span class="line"><span class="built_in">timeout</span></span><br><span class="line">ready!</span><br><span class="line">result is 3</span><br></pre></td></tr></table></figure>
+
+
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/09/C-windows%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%B0JsonCpp/" class="archive-article-date">
-  	<time datetime="2021-11-09T11:34:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-09</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/09/C-windows%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%B0JsonCpp/">C++ windows加载配置文件到JsonCpp</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -191,214 +231,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/06/detours%E9%92%A9%E5%AD%90%E8%8E%B7%E5%8F%96%E5%89%AA%E5%88%87%E6%9D%BF%E5%86%85%E5%AE%B9/" class="archive-article-date">
-  	<time datetime="2021-11-06T05:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-06</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2022/12/06/%E4%BD%BF%E7%94%A8C-11%E5%AE%9E%E7%8E%B0WaitForSingleObject%E7%B1%BB%E4%BC%BC%E7%9A%84%E5%8A%9F%E8%83%BD/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">使用C++11实现WaitForSingleObject类似的功能</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/06/detours%E9%92%A9%E5%AD%90%E8%8E%B7%E5%8F%96%E5%89%AA%E5%88%87%E6%9D%BF%E5%86%85%E5%AE%B9/">detours钩子获取剪切板内容</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/03/%E8%AE%B0%E5%BD%95%E9%B2%B2%E9%B9%8F9000%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E7%BC%96%E8%AF%91opencv3-4-3/" class="archive-article-date">
-  	<time datetime="2021-11-03T11:17:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/03/%E8%AE%B0%E5%BD%95%E9%B2%B2%E9%B9%8F9000%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E7%BC%96%E8%AF%91opencv3-4-3/">记录各种国产系统编译opencv3.4.3</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/31/Linux-C-%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E5%8D%95%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-10-31T02:06:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-31</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/31/Linux-C-%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E5%8D%95%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95/">Linux C 一种实现单实例的方法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/30/%E8%AE%B0%E5%BD%95ssh%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/" class="archive-article-date">
-  	<time datetime="2021-10-30T01:38:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/30/%E8%AE%B0%E5%BD%95ssh%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/">记录ssh相关操作</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
-  	<time datetime="2021-10-29T11:28:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">安装交叉编译环境</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/4/">上一页</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><span class="page-number current">5</span>
-    </nav>
-  
-
 
 
           </div>
@@ -421,8 +353,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2022-12-06T06:53:51.124Z</updated>
+  <updated>2022-12-09T01:07:19.039Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>std::async获取异步执行结果和状态</title>
+    <link href="https://yesir.github.io/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/"/>
+    <id>https://yesir.github.io/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/</id>
+    <published>2022-12-09T00:44:24.000Z</published>
+    <updated>2022-12-09T01:07:19.039Z</updated>
+    
+    <content type="html"><![CDATA[<p>简单来讲<code>std::async</code>是对<code>std::future、std::promise和std::packaged_task</code>的一个包装，将异步操作用<code>std::packaged_task</code>包装起来，然后将异步操作的结果放到<code>std::promise</code>中,在外层通过std::future.get/wait来获取结果。</p><span id="more"></span><blockquote><p>函数原型<br>  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  std::async(std::launch::async | std::launch::deferred, f, args...)</span><br><span class="line">  第一个参数是线程的创建策略;</span><br><span class="line">std::launch::async：在调用async就开始创建线程</span><br><span class="line">std::launch::deferred：延迟加载方式创建线程。调用async时不创建线程，直到调用了future的get或者<span class="built_in">wait</span>时才创建线程。</span><br><span class="line">  第二个参数是线程函数;</span><br><span class="line">  第三个参数是线程函数的参数;</span><br></pre></td></tr></table></figure></p></blockquote><blockquote><p>示例</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;iostream&gt;</span></span><br><span class="line"><span class="comment">#include &lt;thread&gt;</span></span><br><span class="line"><span class="comment">#include &lt;future&gt;</span></span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[])</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    std::future&lt;int&gt; f1 = std::async(std::launch::async, []()&#123;</span><br><span class="line">        <span class="built_in">return</span> 1; </span><br><span class="line">    &#125;);</span><br><span class="line"> </span><br><span class="line">    std::cout &lt;&lt; <span class="string">f1.get() &lt;&lt; std::endl; //output: 1</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    std::future&lt;int&gt; f2 = std::async(std::launch::async, []()&#123;</span></span><br><span class="line"><span class="string">        std::cout &lt;&lt; 2 &lt;&lt; std::endl;</span></span><br><span class="line"><span class="string">        return 0;</span></span><br><span class="line"><span class="string">    &#125;);</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    f2.wait(); //output: 2</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">    std::future&lt;int&gt; future = std::async(std::launch::async, []()&#123;</span></span><br><span class="line"><span class="string">        std::this_thread::sleep_for(std::chrono::seconds(3));</span></span><br><span class="line"><span class="string">        return 3; </span></span><br><span class="line"><span class="string">    &#125;);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">    std::cout &lt;&lt; &quot;waiting...\n&quot;;</span></span><br><span class="line"><span class="string">    std::future_status status;</span></span><br><span class="line"><span class="string">    do &#123;</span></span><br><span class="line"><span class="string">        status = future.wait_for(std::chrono::seconds(1));</span></span><br><span class="line"><span class="string">        if (status == std::future_status::deferred) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;deferred\n&quot;;</span></span><br><span class="line"><span class="string">        &#125; else if (status == std::future_status::timeout) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;timeout\n&quot;;</span></span><br><span class="line"><span class="string">        &#125; else if (status == std::future_status::ready) &#123;</span></span><br><span class="line"><span class="string">            std::cout &lt;&lt; &quot;ready!\n&quot;;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125; while (status != std::future_status::ready);</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">    std::cout &lt;&lt; &quot;result is &quot; &lt;&lt; future.get() &lt;&lt; &#x27;\n&#x27;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    return 0;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure><blockquote><p>输出结果</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">waiting...</span><br><span class="line"><span class="built_in">timeout</span></span><br><span class="line"><span class="built_in">timeout</span></span><br><span class="line">ready!</span><br><span class="line">result is 3</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;简单来讲&lt;code&gt;std::async&lt;/code&gt;是对&lt;code&gt;std::future、std::promise和std::packaged_task&lt;/code&gt;的一个包装，将异步操作用&lt;code&gt;std::packaged_task&lt;/code&gt;包装起来，然后将异步操作的结果放到&lt;code&gt;std::promise&lt;/code&gt;中,在外层通过std::future.get/wait来获取结果。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
+    
+  </entry>
   
   <entry>
     <title>使用C++11实现WaitForSingleObject类似的功能</title>
@@ -377,25 +396,6 @@
     
     
     <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>opencv学习（一）</title>
-    <link href="https://yesir.github.io/2022/01/11/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-    <id>https://yesir.github.io/2022/01/11/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89/</id>
-    <published>2022-01-11T10:55:51.000Z</published>
-    <updated>2022-05-30T03:21:21.888Z</updated>
-    
-    <content type="html"><![CDATA[<p> 将内存中的图片转换成<code>cv::Mat</code>对象或<code>QImage</code>对象</p><span id="more"></span><p>unsigned char* to cv::Mat</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">cv::Mat <span class="title">mat</span><span class="params">(图片高度, 图片宽度, CV_8UC3)</span></span>;</span><br><span class="line"><span class="built_in">memcpy</span>(mat.data, <span class="type">unsigned</span> <span class="type">char</span>*, 图片大小);</span><br></pre></td></tr></table></figure><p>cv::Mat to unsigned char*</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span>* = mat.data</span><br></pre></td></tr></table></figure><p>unsigned char* to QImage</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">QImage <span class="title">image</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span>*, 图片高度, 图片宽度, 每行字节数(在cv::Mat中即mat.step), QImage::Format_RGB888)</span></span>;</span><br><span class="line">QPixmap pixmap = QPixmap::<span class="built_in">fromImage</span>(image);</span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt; 将内存中的图片转换成&lt;code&gt;cv::Mat&lt;/code&gt;对象或&lt;code&gt;QImage&lt;/code&gt;对象&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="Opencv" scheme="https://yesir.github.io/tags/Opencv/"/>
     
   </entry>
   
