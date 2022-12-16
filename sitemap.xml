@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yesir.github.io/2022/12/16/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%89%EF%BC%89/</loc>
+    
+    <lastmod>2022-12-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://yesir.github.io/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/</loc>
     
     <lastmod>2022-12-09</lastmod>
@@ -418,7 +427,7 @@
 
   <url>
     <loc>https://yesir.github.io/</loc>
-    <lastmod>2022-12-09</lastmod>
+    <lastmod>2022-12-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -426,28 +435,28 @@
   
   <url>
     <loc>https://yesir.github.io/tags/C-C/</loc>
-    <lastmod>2022-12-09</lastmod>
+    <lastmod>2022-12-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/</loc>
-    <lastmod>2022-12-09</lastmod>
+    <lastmod>2022-12-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://yesir.github.io/tags/%E9%9A%8F%E7%AC%94/</loc>
-    <lastmod>2022-12-09</lastmod>
+    <lastmod>2022-12-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://yesir.github.io/tags/Opencv/</loc>
-    <lastmod>2022-12-09</lastmod>
+    <lastmod>2022-12-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
