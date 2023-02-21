@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>随笔</title>
+  <title>QtConcurrent引发的崩溃 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/page/2/index.html">
+  <meta name="description" content="使用QtConcurrent创建线程的一些问题总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QtConcurrent引发的崩溃">
+<meta property="og:url" content="https://yesir.github.io/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="使用QtConcurrent创建线程的一些问题总结">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-02-21T09:17:12.000Z">
+<meta property="article:modified_time" content="2023-02-21T09:34:23.773Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -150,34 +155,62 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-树莓派配置smb共享服务" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-QtConcurrent引发的崩溃" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">树莓派配置smb共享服务</a>
+    <h1 class="article-title" itemprop="name">
+      QtConcurrent引发的崩溃
     </h1>
   
 
         
-        <a href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/" class="archive-article-date">
-  	<time datetime="2022-11-17T08:04:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-17</time>
+        <a href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/" class="archive-article-date">
+  	<time datetime="2023-02-21T09:17:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-21</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>树莓派3B+配置smb共享服务，方便在windows上访问树莓派硬盘文件.</p>
-        
-          <a class="article-more-a" href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/#more">more >></a>
-        
+        <p>使用QtConcurrent创建线程的一些问题总结</p>
+<span id="more"></span>
+
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">在.h文件中定义了：</span><br><span class="line">QFuture&lt;int&gt; m_iFuture;</span><br><span class="line">int funcionProc();</span><br><span class="line"></span><br><span class="line">在源文件中：</span><br><span class="line">m_iFuture = QtConcurrent::run(this, &amp;ClassName::functionProc);</span><br><span class="line"></span><br><span class="line">int ClassName::<span class="function"><span class="title">functionProc</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">while</span>(!isExit())</span><br><span class="line">    &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>* 注：由于使用`QtConcurrent::run`创建的线程不能使用`m_iFuture`暂停和取消，只能查询运行状态及完成返回值，因此上面的代码，如果在外面设置`isExit()==true`时，在不同的Qt版本会崩溃
+
+* 原因是线程执行函数一直得不到返回值, 需要在`functionProc`中添加`return`语句。
+* 附打开摄像头代码
+</code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ifndef CAMERA_H</span></span><br><span class="line"><span class="comment">#define CAMERA_H</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &lt;QDialog&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QMutex&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QFuture&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QPixmap&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QSize&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QThread&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &quot;opencv2/opencv.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/core.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/highgui.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/videoio.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/imgproc.hpp&quot;</span></span><br><span class="line"></span><br><span class="line">class Camera : public QObject</span><br><span class="line">&#123;</span><br><span class="line">    Q_OBJECT</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line">    explicit Camera(QObject *parent = 0);</span><br><span class="line">    ~Camera();</span><br><span class="line"></span><br><span class="line">    bool open();</span><br><span class="line">    void close();</span><br><span class="line">    bool isAvailable();</span><br><span class="line">    bool isOpened();</span><br><span class="line"></span><br><span class="line">    cv::Mat getCurrentFrame();</span><br><span class="line">private:</span><br><span class="line">     bool needStopFrameProc();</span><br><span class="line">     void setStopFrameProc(bool stopFlag);</span><br><span class="line">     int frameProc();</span><br><span class="line">     void setCurrentFrame(const cv::Mat&amp; frame);</span><br><span class="line"></span><br><span class="line">signals:</span><br><span class="line">    void frameCaptured(QPixmap pixmap);</span><br><span class="line">    void cameraStateChanged(QString);</span><br><span class="line">private:</span><br><span class="line">    cv::VideoCapture* m_videoCapture;</span><br><span class="line"></span><br><span class="line">    bool m_stopFrameProc;</span><br><span class="line">    QMutex m_frameProcMutex;</span><br><span class="line">    QFuture&lt;int&gt; m_frameProcFuture;</span><br><span class="line"></span><br><span class="line">    QMutex m_currentFrameMutex;</span><br><span class="line">    cv::Mat m_currentFrame;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">#endif // CAMERA_H</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &quot;Camera.h&quot;</span></span><br><span class="line"><span class="comment">#include &lt;dirent.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;libudev.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;fstream&gt;</span></span><br><span class="line"><span class="comment">#include &lt;pthread.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;time.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;vector&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;iostream&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;inttypes.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/types.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/stat.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;fcntl.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/ioctl.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/mman.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;linux/videodev2.h&gt;//v4l2相关结构体</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &quot;opencv2/opencv.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/core.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/highgui.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/videoio.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &quot;opencv2/imgproc.hpp&quot;</span></span><br><span class="line"><span class="comment">#include &lt;QtMultimedia/QCameraInfo&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QMessageBox&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QMutexLocker&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QtConcurrent&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QImage&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string&gt;</span></span><br><span class="line"><span class="comment">#include &lt;map&gt;</span></span><br><span class="line"><span class="comment">#include &lt;QDebug&gt;</span></span><br><span class="line"></span><br><span class="line">using std::string;</span><br><span class="line"></span><br><span class="line">static const int CAMERA_WIDTH = 640;</span><br><span class="line">static const int CAMERA_HEIGHT = 480;</span><br><span class="line"></span><br><span class="line"><span class="comment">#define udev_list_entry_foreach(entry, first) \</span></span><br><span class="line">    <span class="keyword">for</span> (entry = first; \</span><br><span class="line">         entry != NULL; \</span><br><span class="line">         entry = udev_list_entry_get_next(entry))</span><br><span class="line"></span><br><span class="line">typedef struct &#123;</span><br><span class="line">    string vid;</span><br><span class="line">    string pid;</span><br><span class="line">&#125; VPID;</span><br><span class="line"></span><br><span class="line">std::map&lt;string, string&gt; g_pidandpath;</span><br><span class="line"></span><br><span class="line">int v4l2_is_v4l_dev(const char *name)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">return</span> !strncmp(name, <span class="string">&quot;video&quot;</span>, 5) || !strncmp(name, <span class="string">&quot;radio&quot;</span>, 5) || !strncmp(name, <span class="string">&quot;vbi&quot;</span>, 3) || !strncmp(name, <span class="string">&quot;v4l-subdev&quot;</span>, 10);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool read_vpid(string dev_path, VPID&amp; vpid)</span><br><span class="line">&#123;</span><br><span class="line">    bool success = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    auto udev = udev_new();</span><br><span class="line">    <span class="keyword">if</span> (!udev) &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    struct <span class="built_in">stat</span> statbuf;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">stat</span>(dev_path.c_str(), &amp;statbuf) &lt; 0) &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    auto <span class="built_in">type</span> =  S_ISBLK(statbuf.st_mode) ? <span class="string">&#x27;b&#x27;</span> : S_ISCHR(statbuf.st_mode) ? <span class="string">&#x27;c&#x27;</span> : 0;</span><br><span class="line"></span><br><span class="line">    auto opened_dev = udev_device_new_from_devnum(udev, <span class="built_in">type</span>, statbuf.st_rdev);</span><br><span class="line">    auto dev = opened_dev;</span><br><span class="line"></span><br><span class="line">    struct udev_list_entry *list_entry;</span><br><span class="line">    udev_list_entry_foreach(list_entry, udev_device_get_properties_list_entry(dev))</span><br><span class="line">    &#123;</span><br><span class="line">        success = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">if</span>(strcmp(udev_list_entry_get_name(list_entry), <span class="string">&quot;ID_VENDOR_ID&quot;</span>) == 0)</span><br><span class="line">            vpid.vid = udev_device_get_property_value(dev, udev_list_entry_get_name(list_entry));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(strcmp(udev_list_entry_get_name(list_entry), <span class="string">&quot;ID_MODEL_ID&quot;</span>) == 0)</span><br><span class="line">            vpid.pid = udev_device_get_property_value(dev, udev_list_entry_get_name(list_entry));</span><br><span class="line"></span><br><span class="line">        //printf(<span class="string">&quot;==== vid: %s\n pid: %s\n&quot;</span>, vpid.vid.c_str(), vpid.pid.c_str());</span><br><span class="line">        /*<span class="built_in">printf</span>(<span class="string">&quot;%s=%s\n&quot;</span>, udev_list_entry_get_name(list_entry), udev_list_entry_get_value(list_entry));*/</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /*<span class="keyword">while</span> (dev != nullptr) &#123;</span><br><span class="line">        auto serial = udev_device_get_sysattr_value(dev, <span class="string">&quot;serial&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (nullptr == serial) &#123;</span><br><span class="line">            dev = udev_device_get_parent(dev);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            success = <span class="literal">true</span>;</span><br><span class="line">            vpid.vid = udev_device_get_sysattr_value(dev, <span class="string">&quot;idVendor&quot;</span>);</span><br><span class="line">            vpid.pid = udev_device_get_sysattr_value(dev, <span class="string">&quot;idProduct&quot;</span>);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;==== vid: %s\n pid: %s\n&quot;</span>, vpid.vid.c_str(), vpid.pid.c_str());</span><br><span class="line">            <span class="built_in">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;*/</span><br><span class="line">    <span class="keyword">if</span> (opened_dev) &#123;</span><br><span class="line">        udev_device_unref(opened_dev);</span><br><span class="line">    &#125;</span><br><span class="line">    udev_unref(udev);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> success;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool get_camera_path(string &amp;camera_path)</span><br><span class="line">&#123;</span><br><span class="line">    bool success = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    const char* dir_name = <span class="string">&quot;/dev&quot;</span>;</span><br><span class="line">    DIR* <span class="built_in">dir</span> = opendir(dir_name);</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">dir</span>) &#123;</span><br><span class="line">        fprintf(stderr, <span class="string">&quot;Error: couldn&#x27;t open the directory: %s\n&quot;</span>, dir_name);</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    struct dirent* entry = nullptr;</span><br><span class="line">    int fd;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((entry = readdir(<span class="built_in">dir</span>))) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!v4l2_is_v4l_dev(entry-&gt;d_name))</span><br><span class="line">            <span class="built_in">continue</span>;</span><br><span class="line"></span><br><span class="line">        char device_name[256];</span><br><span class="line">        snprintf(device_name, sizeof(device_name), <span class="string">&quot;/dev/%s&quot;</span>, entry-&gt;d_name);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> ((fd = open(device_name, O_RDWR | O_NONBLOCK)) &lt; 0) &#123;</span><br><span class="line">            <span class="built_in">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        struct v4l2_capability <span class="built_in">cap</span>;</span><br><span class="line">        <span class="keyword">if</span> (ioctl(fd, VIDIOC_QUERYCAP, &amp;<span class="built_in">cap</span>) &lt; 0) &#123;</span><br><span class="line">            fprintf(stderr, <span class="string">&quot;Error: cam_info: can&#x27;t open device: %s\n&quot;</span>, device_name);</span><br><span class="line">            close(fd);</span><br><span class="line">            <span class="built_in">break</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;            </span><br><span class="line">            <span class="keyword">if</span>(!(cap.capabilities &amp; V4L2_CAP_VIDEO_CAPTURE) || !(cap.capabilities &amp; V4L2_CAP_STREAMING)) &#123;                </span><br><span class="line">                close(fd);</span><br><span class="line">                <span class="built_in">continue</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                //printf(<span class="string">&quot;Driver Name:%s\n Card Name:%s\n Bus info:%s\n version:%d\n capabilities:%x\n \n &quot;</span>, cap.driver, cap.card, cap.bus_info,cap.version,cap.capabilities);</span><br><span class="line">                camera_path = device_name;</span><br><span class="line">                VPID vid;</span><br><span class="line">                <span class="keyword">if</span>(read_vpid(device_name, vid))</span><br><span class="line">                &#123;</span><br><span class="line">                    g_pidandpath[vid.pid] = device_name;</span><br><span class="line">                &#125;</span><br><span class="line">                close(fd);</span><br><span class="line">                success = <span class="literal">true</span>;</span><br><span class="line">//                <span class="built_in">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    closedir(<span class="built_in">dir</span>);</span><br><span class="line">    <span class="built_in">return</span> success;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Camera::Camera(QObject *parent)</span><br><span class="line">&#123;</span><br><span class="line">    m_stopFrameProc = <span class="literal">false</span>;</span><br><span class="line">    m_videoCapture = new cv::VideoCapture;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Camera::~<span class="function"><span class="title">Camera</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    delete m_videoCapture;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool Camera::<span class="function"><span class="title">open</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(m_frameProcFuture.isRunning()) &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        setStopFrameProc(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    string cameraPath;</span><br><span class="line">    <span class="keyword">if</span>(!::get_camera_path(cameraPath))&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;can not find vis path!\n&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool cameraOpened;</span><br><span class="line">    <span class="keyword">for</span>(std::map&lt;string, string&gt;::iterator it = g_pidandpath.begin(); it != g_pidandpath.end(); it++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(strncmp(it-&gt;first.c_str(), <span class="string">&quot;ae01&quot;</span>, 4) == 0)</span><br><span class="line">        &#123;</span><br><span class="line">            cameraOpened = m_videoCapture-&gt;open(it-&gt;second);</span><br><span class="line">            //printf(<span class="string">&quot;====== %s, cameraOpened: %d\n&quot;</span>, it-&gt;second.c_str(), cameraOpened);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //bool cameraOpened = m_videoCapture-&gt;open(cameraPath);</span><br><span class="line">    //printf(<span class="string">&quot;====== %s, cameraOpened: %d\n&quot;</span>, cameraPath.c_str(), cameraOpened);</span><br><span class="line">    <span class="keyword">if</span>(cameraOpened) &#123;</span><br><span class="line">        m_videoCapture-&gt;<span class="built_in">set</span>(CV_CAP_PROP_FPS, 15);</span><br><span class="line">        m_videoCapture-&gt;<span class="built_in">set</span>(CV_CAP_PROP_FRAME_WIDTH, CAMERA_WIDTH);</span><br><span class="line">        m_videoCapture-&gt;<span class="built_in">set</span>(CV_CAP_PROP_FRAME_HEIGHT, CAMERA_HEIGHT);</span><br><span class="line">        m_videoCapture-&gt;<span class="built_in">set</span>(CV_CAP_PROP_FOURCC, CV_FOURCC(<span class="string">&#x27;M&#x27;</span>, <span class="string">&#x27;J&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;G&#x27;</span>));</span><br><span class="line"></span><br><span class="line">        m_frameProcFuture = QtConcurrent::run(this, &amp;Camera::frameProc);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> cameraOpened;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Camera::<span class="function"><span class="title">close</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(m_frameProcFuture.isRunning())</span><br><span class="line">    &#123;</span><br><span class="line">        setStopFrameProc(<span class="literal">true</span>);</span><br><span class="line">        m_frameProcFuture.waitForFinished();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    m_videoCapture-&gt;release();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool Camera::<span class="function"><span class="title">isAvailable</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    string cameraPath;</span><br><span class="line">    <span class="keyword">if</span>(!::get_camera_path(cameraPath))&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;can not find vis path!\n&quot;</span>);</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    bool cameraOpened = m_videoCapture-&gt;open(cameraPath);</span><br><span class="line">    <span class="keyword">if</span>(cameraOpened) &#123;</span><br><span class="line">        m_videoCapture-&gt;release();</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool Camera::<span class="function"><span class="title">isOpened</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">return</span> m_videoCapture-&gt;isOpened();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bool Camera::<span class="function"><span class="title">needStopFrameProc</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    QMutexLocker locker(&amp;m_frameProcMutex);</span><br><span class="line">    //qDebug() &lt;&lt; <span class="string">&quot;needStopFrameProc: &quot;</span> &lt;&lt; <span class="string">m_stopFrameProc;</span></span><br><span class="line"><span class="string">    return m_stopFrameProc</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Camera::setStopFrameProc(bool stopFlag)</span><br><span class="line">&#123;</span><br><span class="line">    QMutexLocker locker(&amp;m_frameProcMutex);</span><br><span class="line">    //qDebug() &lt;&lt; <span class="string">&quot;setStopFrameProc: &quot;</span> &lt;&lt; <span class="string">stopFlag;</span></span><br><span class="line"><span class="string">    m_stopFrameProc = stopFlag</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line">* 通过调试发现，当摄像头断开后，每次<span class="built_in">read</span>()虽然返回的还是<span class="literal">true</span>，Mat也不是empty，但是Mat的数据都是上一次的数据，</span><br><span class="line">* 于是推测可以通过直接判断Mat的内容来判断摄像头是否正常。经过调试发现摄像头断开时Mat的数据的确是初始状态的。于是可以通过检测<span class="built_in">read</span>()后的Mat来判断摄像头是否正常：</span><br><span class="line">*/</span><br><span class="line">bool checkMat(cv::Mat&amp; mat)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (int i = 0; i &lt; mat.rows; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		uchar* pRow = (unsigned char*)mat.ptr&lt;uchar&gt;(i);</span><br><span class="line">		<span class="keyword">for</span> (int j = 0; j &lt; mat.cols * mat.channels(); j++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> (pRow[j])</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line">/*</span><br><span class="line">* 在正常状态下，这个判断是很快的，所有这个判断可以在每一帧的后面使用。当然，这个要求Mat每次都得初始化。</span><br><span class="line">*</span><br><span class="line">* cv::Mat m;</span><br><span class="line">* <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">* &#123;</span><br><span class="line">*    m.release();</span><br><span class="line">*    m_v.read(m);</span><br><span class="line">*    <span class="keyword">if</span> (!checkMat(frame))</span><br><span class="line">*    &#123;</span><br><span class="line">*        LOG(<span class="string">&quot;摄像头断开\n&quot;</span>);</span><br><span class="line">*        m_v.release();</span><br><span class="line">*    &#125;</span><br><span class="line">*    ...</span><br><span class="line">* &#125;</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">int Camera::<span class="function"><span class="title">frameProc</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    struct timeval <span class="built_in">timeout</span>;</span><br><span class="line">    timeout.tv_sec = 0;</span><br><span class="line">    timeout.tv_usec = 1000*100;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(!needStopFrameProc()) &#123;</span><br><span class="line">        usleep(50*1000);</span><br><span class="line"></span><br><span class="line">        cv::Mat rawFrame;</span><br><span class="line">        *m_videoCapture &gt;&gt; rawFrame;</span><br><span class="line">        <span class="keyword">if</span> (!checkMat(rawFrame))</span><br><span class="line">            emit cameraStateChanged(<span class="string">&quot;摄像头断开, 请重试&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(rawFrame.empty()) &#123;</span><br><span class="line">            <span class="built_in">continue</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            setCurrentFrame(rawFrame);</span><br><span class="line"></span><br><span class="line">            cv::Mat frame;</span><br><span class="line">            //显示可见光摄像头</span><br><span class="line">            cv::cvtColor(rawFrame, frame, cv::COLOR_RGB2BGR);</span><br><span class="line"></span><br><span class="line">            const uchar* data = (const uchar*) frame.data;</span><br><span class="line">            QImage image(data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888);</span><br><span class="line">            QPixmap pixmap = QPixmap::fromImage(image);</span><br><span class="line"></span><br><span class="line">            emit frameCaptured(pixmap);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cv::Mat Camera::<span class="function"><span class="title">getCurrentFrame</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    QMutexLocker locker(&amp;m_currentFrameMutex);</span><br><span class="line">    <span class="built_in">return</span> m_currentFrame.<span class="built_in">clone</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Camera::setCurrentFrame(const cv::Mat &amp;frame)</span><br><span class="line">&#123;</span><br><span class="line">    QMutexLocker locker(&amp;m_currentFrameMutex);</span><br><span class="line">    m_currentFrame = frame;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
       
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -188,7 +221,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
         		</li>
       		
 		</ul>
@@ -197,16 +230,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">在aarch64麒麟V10上编译qt-5.9.8</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -226,701 +318,15 @@
 
 
 
-
-  
-    <article id="post-Linux-qt-打包" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/16/Linux-qt-%E6%89%93%E5%8C%85/">Linux qt 打包</a>
-    </h1>
-  
-
-        
-        <a href="/2022/11/16/Linux-qt-%E6%89%93%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2022-11-16T03:32:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在windows系统中，通用使用<code>windeployqt.exe</code>打包qt程序，同样在linux 系统中可以使用<code>linuxdeployqt</code>打包qt程序。</p>
-<blockquote>
-<p>注：<code>linuxdeployqt</code>不支持glibc高版本的操作系统</p>
-</blockquote>
-        
-          <a class="article-more-a" href="/2022/11/16/Linux-qt-%E6%89%93%E5%8C%85/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/11/16/Linux-qt-%E6%89%93%E5%8C%85/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用docker搭建gitlab" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/">使用docker搭建gitlab</a>
-    </h1>
-  
-
-        
-        <a href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/" class="archive-article-date">
-  	<time datetime="2022-11-09T09:35:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Docker 搭建 Gitlab 服务器</p>
-        
-          <a class="article-more-a" href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-c语言byte转16进制字符串" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/">c语言byte转16进制字符串</a>
-    </h1>
-  
-
-        
-        <a href="/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="archive-article-date">
-  	<time datetime="2022-11-08T09:17:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>利用<code>sprintf</code>来实现byte转换成16进制字符串,即在内存中<code>00 01 0F 23</code> 转换为<code>&quot;00010F23&quot;</code>。</p>
-        
-          <a class="article-more-a" href="/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-opencv学习（二）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/30/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89/">opencv学习（二）</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/30/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2022-05-30T03:20:48.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-30</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>将bmp图片转换成Base64字符串</p>
-        
-          <a class="article-more-a" href="/2022/05/30/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Opencv</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/30/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C-切割字符串" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/27/C-%E5%88%87%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2/">C++切割字符串</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/27/C-%E5%88%87%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2/" class="archive-article-date">
-  	<time datetime="2022-05-27T06:55:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>C++中根据字符或字符串分割字符串</p>
-        
-          <a class="article-more-a" href="/2022/05/27/C-%E5%88%87%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/27/C-%E5%88%87%E5%89%B2%E5%AD%97%E7%AC%A6%E4%B8%B2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-centos7-aarch64换源" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/">centos7-aarch64换源</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/" class="archive-article-date">
-  	<time datetime="2022-05-20T09:36:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>centos 7 aarch64系统yum替换阿里源</p>
-        
-          <a class="article-more-a" href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-安装7-3-0版本gcc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/">安装7.3.0版本gcc</a>
-    </h1>
-  
-
-        
-        <a href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/" class="archive-article-date">
-  	<time datetime="2022-05-17T07:34:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-17</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>安装7.3.0版本gcc</p>
-        
-          <a class="article-more-a" href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux-popen实例" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/">Linux popen实例</a>
-    </h1>
-  
-
-        
-        <a href="/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/" class="archive-article-date">
-  	<time datetime="2022-03-29T11:12:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-03-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Linux中使用<code>popen</code>获取命令执行结果</p>
-        
-          <a class="article-more-a" href="/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-windows下获取cpuid" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/03/07/windows%E4%B8%8B%E8%8E%B7%E5%8F%96cpuid/">windows下获取cpuid</a>
-    </h1>
-  
-
-        
-        <a href="/2022/03/07/windows%E4%B8%8B%E8%8E%B7%E5%8F%96cpuid/" class="archive-article-date">
-  	<time datetime="2022-03-07T13:20:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-03-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先是区分64位与32位系统，在windows系统中通常都包括<code>_win32</code>此宏，因此通常用此宏来判断操作系统平台，如win、linux、mac等</p>
-        
-          <a class="article-more-a" href="/2022/03/07/windows%E4%B8%8B%E8%8E%B7%E5%8F%96cpuid/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/03/07/windows%E4%B8%8B%E8%8E%B7%E5%8F%96cpuid/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
-    </nav>
   
 
+  
+
+  
+
+  
 
 
           </div>
@@ -942,8 +348,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
