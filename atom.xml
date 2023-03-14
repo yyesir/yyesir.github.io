@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2023-03-09T00:54:29.381Z</updated>
+  <updated>2023-03-14T06:29:47.344Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用C++11创建简易环形队列</title>
+    <link href="https://yesir.github.io/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/"/>
+    <id>https://yesir.github.io/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/</id>
+    <published>2023-03-14T06:23:49.000Z</published>
+    <updated>2023-03-14T06:29:47.344Z</updated>
+    
+    <content type="html"><![CDATA[<p>使用<code>std::vector</code>来实现环形队列</p><span id="more"></span><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">#include &lt;vector&gt;</span></span><br><span class="line"><span class="comment">#include &lt;algorithm&gt;</span></span><br><span class="line"></span><br><span class="line">template &lt;typename T&gt;</span><br><span class="line">class RingBuffer &#123;</span><br><span class="line">public:</span><br><span class="line">    RingBuffer(size_t capacity) : buffer(capacity), begin(0), end(0), size(0) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    void push_back(const T &amp;value) &#123;</span><br><span class="line">        buffer[end] = value;</span><br><span class="line">        end = (end + 1) % buffer.size();</span><br><span class="line">        <span class="keyword">if</span> (size == buffer.size()) &#123;</span><br><span class="line">            begin = (begin + 1) % buffer.size();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            size++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    const T&amp; operator[](size_t index) const &#123;</span><br><span class="line">        <span class="built_in">return</span> buffer[(begin + index) % buffer.size()];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    size_t getSize() const &#123;</span><br><span class="line">        <span class="built_in">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    std::vector&lt;T&gt; buffer;</span><br><span class="line">    size_t begin, end, size;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure><p>由<code>std::vector</code>存储元素，三个成员变量begin、end和size分别表示队列的起始位置、结束位置和元素数量.<br><code>push_back</code>方法可以将新元素添加到队列尾部，并根据队列是否已满更新起止位置和元素数量.<br>可以通过下标访问队列中的元素.<br><code>getSize</code>方法可以返回队列中元素的数量.</p><p>使用方法：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">RingBuffer&lt;int&gt; ringBuffer(10);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (int i = 0; i &lt; 20; i++) &#123;</span><br><span class="line">    ringBuffer.push_back(i);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (size_t i = 0; i &lt; ringBuffer.getSize(); i++) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">ringBuffer[i] &lt;&lt; &quot; &quot;;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">// 输出：10 11 12 13 14 15 16 17 18 19</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure><p>创建一个容量为10的整型环形队列，向其中添加了20个元素。由于队列容量有限，只能保留最后10个元素。<br>最后通过下标访问队列中的元素，并输出结果</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;使用&lt;code&gt;std::vector&lt;/code&gt;来实现环形队列&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
+    
+  </entry>
   
   <entry>
     <title>C++单例模式模板类</title>
@@ -377,25 +396,6 @@
     
     
     <category term="运维" scheme="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Linux popen实例</title>
-    <link href="https://yesir.github.io/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/"/>
-    <id>https://yesir.github.io/2022/03/29/Linux-popen%E5%AE%9E%E4%BE%8B/</id>
-    <published>2022-03-29T11:12:45.000Z</published>
-    <updated>2022-03-29T11:13:56.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>Linux中使用<code>popen</code>获取命令执行结果</p><span id="more"></span><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span></span></span><br><span class="line"> <span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"> <span class="meta">#<span class="keyword">define</span> IN</span></span><br><span class="line"> <span class="meta">#<span class="keyword">define</span> OUT</span></span><br><span class="line"> <span class="meta">#<span class="keyword">define</span> BUFSIZE 4096</span></span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> <span class="title function_">getExecResult</span><span class="params">(IN <span class="type">char</span>* cmd, OUT <span class="type">char</span>* res)</span></span><br><span class="line"> &#123;</span><br><span class="line">     <span class="type">char</span> buf[BUFSIZE];</span><br><span class="line">     FILE* fp;</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">if</span>(<span class="literal">NULL</span> == (fp = popen(cmd, <span class="string">&quot;r&quot;</span>)))&#123;</span><br><span class="line">         <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>,<span class="string">&quot;execute command failed: %s&quot;</span>,strerror(errno));</span><br><span class="line">         <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">// 获取执行结果</span></span><br><span class="line">     <span class="keyword">while</span>(<span class="literal">NULL</span> != fgets(buf, <span class="keyword">sizeof</span>(buf), fp))&#123;</span><br><span class="line">       <span class="built_in">strcat</span>(res, buf);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line"> &#123;</span><br><span class="line">     <span class="type">char</span>* cmd = <span class="string">&quot;ls -l ..&quot;</span>;</span><br><span class="line">     <span class="type">char</span> buf[BUFSIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> </span><br><span class="line">     getExecResult(cmd, buf);</span><br><span class="line">     <span class="built_in">printf</span>(<span class="string">&quot;res: %s\n&quot;</span>, buf);</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;Linux中使用&lt;code&gt;popen&lt;/code&gt;获取命令执行结果&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
     
   </entry>
   
