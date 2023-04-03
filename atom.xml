@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2023-03-31T01:37:16.806Z</updated>
+  <updated>2023-04-03T01:23:27.081Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在ubuntu上搭建arm64交叉编译环境</title>
+    <link href="https://yesir.github.io/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/"/>
+    <id>https://yesir.github.io/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</id>
+    <published>2023-04-03T01:08:25.000Z</published>
+    <updated>2023-04-03T01:23:27.081Z</updated>
+    
+    <content type="html"><![CDATA[<p>使用环境<code>Ubuntu 20.04.3 LTS</code>,并在系统先安装好<code>Qt</code>,<code>QT Creator</code>开发工具、以及<code>qemu</code>用来加载<code>arm64</code>镜像</p><span id="more"></span><ul><li>安装前准备<ol><li>智能终端OS的rootfs镜像，如：UOS-Smart-20-arm64-src.img</li><li>智能终端OS的qt开发环境及依赖包：qt_deb.tar.gz</li></ol></li></ul><ul><li><p>安装</p><ol><li><p>首先在<code>ubuntu</code>上新建一个空的img文件</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=UOS-Smart-20-arm64-new.img bs=1M count=7000</span><br><span class="line">sudo mkfs.ext4 UOS-Smart-20-arm64-new.img</span><br></pre></td></tr></table></figure></li><li><p>在<code>ubuntu</code>上新建2个空目录,分别将UOS-Smart-20-arm64-src.img和UOS-Smart-20-arm64-new.img挂载，并把前者的内容拷贝到后者里</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -m 777 src new</span><br><span class="line">sudo mount UOS-Smart-20-arm64-src.img src</span><br><span class="line">sudo mount UOS-Smart-20-arm64-new.img new</span><br><span class="line">sudo <span class="built_in">cp</span> -rfp src/* new/</span><br><span class="line">sudo umount src</span><br></pre></td></tr></table></figure></li><li><p>如果已安装<code>qemu</code>工具，则直接拷贝文件，否则先安装，然后再拷贝所需文件到目标根文件系统</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install qemu-user-static    <span class="comment">#安装qemu</span></span><br><span class="line">sudo <span class="built_in">cp</span> /usr/bin/qemu-aarch64-static ./new/usr/bin/</span><br><span class="line">sudo <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./new/usr/bin/</span><br><span class="line">sudo <span class="built_in">cp</span> ./new/etc/resolv.conf ./new/etc/resolv.conf.bak</span><br><span class="line">sudo <span class="built_in">cp</span> /etc/resolv.conf ./new/etc/resolv.conf</span><br><span class="line">sudo <span class="built_in">cp</span> qt_deb.tar.gz ./new/home/</span><br></pre></td></tr></table></figure></li><li><p>重新挂载<code>/proc,/dev,/sys</code>节点，然后通过<code>chroot</code>到目标根文件系统中，就进入到了交叉编译环境</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t proc /proc ./new/proc</span><br><span class="line">sudo mount -t sysfs /sys ./new/sys</span><br><span class="line">sudo mount -o <span class="built_in">bind</span> /dev ./new/dev</span><br><span class="line">sudo <span class="built_in">chroot</span> ./new/</span><br></pre></td></tr></table></figure></li><li><p>在交叉编译环境中安装<code>qt_deb.tar.gz</code>中的所有<code>deb</code>包</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo tar xzf /home/qt_deb.tar.gz</span><br><span class="line">sudo dpkg -i /home/qt_deb/*/deb</span><br></pre></td></tr></table></figure></li></ol></li><li><p>上述步骤安装完成之后，交叉编译环境就搭建完成了。</p></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;使用环境&lt;code&gt;Ubuntu 20.04.3 LTS&lt;/code&gt;,并在系统先安装好&lt;code&gt;Qt&lt;/code&gt;,&lt;code&gt;QT Creator&lt;/code&gt;开发工具、以及&lt;code&gt;qemu&lt;/code&gt;用来加载&lt;code&gt;arm64&lt;/code&gt;镜像&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="随笔" scheme="https://yesir.github.io/tags/%E9%9A%8F%E7%AC%94/"/>
+    
+  </entry>
   
   <entry>
     <title>C++命令模式</title>
@@ -377,25 +396,6 @@
     
     
     <category term="运维" scheme="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>c语言byte转16进制字符串</title>
-    <link href="https://yesir.github.io/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
-    <id>https://yesir.github.io/2022/11/08/c%E8%AF%AD%E8%A8%80byte%E8%BD%AC16%E8%BF%9B%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2/</id>
-    <published>2022-11-08T09:17:01.000Z</published>
-    <updated>2022-11-22T06:20:57.340Z</updated>
-    
-    <content type="html"><![CDATA[<p>利用<code>sprintf</code>来实现byte转换成16进制字符串,即在内存中<code>00 01 0F 23</code> 转换为<code>&quot;00010F23&quot;</code>。</p><span id="more"></span><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">unsigned char* src;//源数据</span><br><span class="line">int nLen;//源数据长度</span><br><span class="line">char* dst;//转换后的数据</span><br><span class="line">for (int i = 0; i &lt; nLen; i++) </span><br><span class="line">&#123;</span><br><span class="line">sprintf(dst + i * 2, &quot;%02X&quot;, src[i] &amp; 0xFF);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>将上一转换后的字符串即<code>&quot;00010F23&quot;</code>还原成<code>00 01 0F 23</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">@param pbDest: 转换后的数据</span><br><span class="line">@param pbSrc:  源数据</span><br><span class="line">@param nLen:   源数据长度</span><br><span class="line">int StrToHex(unsigned char* pbDest, char* pbSrc, int nLen)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">BYTE high, low;</span><br><span class="line">int idx, ii = 0;</span><br><span class="line"></span><br><span class="line">for (idx = 0; idx &lt; nLen; idx += 2)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">high = pbSrc[idx];</span><br><span class="line">low  = pbSrc[idx + 1];</span><br><span class="line"></span><br><span class="line">if (high &gt;= &#x27;0&#x27; &amp;&amp; high &lt;= &#x27;9&#x27;)</span><br><span class="line">high = high - &#x27;0&#x27;;</span><br><span class="line">else if (high &gt;= &#x27;A&#x27; &amp;&amp; high &lt;= &#x27;F&#x27;)</span><br><span class="line">high = high - &#x27;A&#x27; + 10;</span><br><span class="line">else if (high &gt;= &#x27;a&#x27; &amp;&amp; high &lt;= &#x27;f&#x27;)</span><br><span class="line">high = high - &#x27;a&#x27; + 10;</span><br><span class="line">else</span><br><span class="line">return ii;</span><br><span class="line"></span><br><span class="line">if (low &gt;= &#x27;0&#x27; &amp;&amp; low &lt;= &#x27;9&#x27;)</span><br><span class="line">low = low - &#x27;0&#x27;;</span><br><span class="line">else if (low &gt;= &#x27;A&#x27; &amp;&amp; low &lt;= &#x27;F&#x27;)</span><br><span class="line">low = low - &#x27;A&#x27; + 10;</span><br><span class="line">else if (low &gt;= &#x27;a&#x27; &amp;&amp; low &lt;= &#x27;f&#x27;)</span><br><span class="line">low = low - &#x27;a&#x27; + 10;</span><br><span class="line">else</span><br><span class="line">return ii;</span><br><span class="line"></span><br><span class="line">pbDest[ii++] = high &lt;&lt; 4 | low;</span><br><span class="line">&#125;</span><br><span class="line">return ii;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;利用&lt;code&gt;sprintf&lt;/code&gt;来实现byte转换成16进制字符串,即在内存中&lt;code&gt;00 01 0F 23&lt;/code&gt; 转换为&lt;code&gt;&amp;quot;00010F23&amp;quot;&lt;/code&gt;。&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
     
   </entry>
   

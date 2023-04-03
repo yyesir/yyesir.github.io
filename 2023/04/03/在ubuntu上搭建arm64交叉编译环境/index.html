@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>Archives | 随笔</title>
+  <title>在ubuntu上搭建arm64交叉编译环境 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/archives/index.html">
+  <meta name="description" content="使用环境Ubuntu 20.04.3 LTS,并在系统先安装好Qt,QT Creator开发工具、以及qemu用来加载arm64镜像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在ubuntu上搭建arm64交叉编译环境">
+<meta property="og:url" content="https://yesir.github.io/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="使用环境Ubuntu 20.04.3 LTS,并在系统先安装好Qt,QT Creator开发工具、以及qemu用来加载arm64镜像">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-04-03T01:08:25.000Z">
+<meta property="article:modified_time" content="2023-04-03T01:23:27.081Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -156,36 +161,83 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-在ubuntu上搭建arm64交叉编译环境" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      在ubuntu上搭建arm64交叉编译环境
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
+
+        
+        <a href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
   	<time datetime="2023-04-03T01:08:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-03</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">在ubuntu上搭建arm64交叉编译环境</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用环境<code>Ubuntu 20.04.3 LTS</code>,并在系统先安装好<code>Qt</code>,<code>QT Creator</code>开发工具、以及<code>qemu</code>用来加载<code>arm64</code>镜像</p>
+<span id="more"></span>
 
-        <div class="article-info info-on-right">
-          
+<ul>
+<li>安装前准备<ol>
+<li>智能终端OS的rootfs镜像，如：UOS-Smart-20-arm64-src.img</li>
+<li>智能终端OS的qt开发环境及依赖包：qt_deb.tar.gz</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>安装</p>
+<ol>
+<li><p>首先在<code>ubuntu</code>上新建一个空的img文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=UOS-Smart-20-arm64-new.img bs=1M count=7000</span><br><span class="line">sudo mkfs.ext4 UOS-Smart-20-arm64-new.img</span><br></pre></td></tr></table></figure></li>
+<li><p>在<code>ubuntu</code>上新建2个空目录,分别将UOS-Smart-20-arm64-src.img和UOS-Smart-20-arm64-new.img挂载，并把前者的内容拷贝到后者里</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -m 777 src new</span><br><span class="line">sudo mount UOS-Smart-20-arm64-src.img src</span><br><span class="line">sudo mount UOS-Smart-20-arm64-new.img new</span><br><span class="line">sudo <span class="built_in">cp</span> -rfp src/* new/</span><br><span class="line">sudo umount src</span><br></pre></td></tr></table></figure></li>
+<li><p>如果已安装<code>qemu</code>工具，则直接拷贝文件，否则先安装，然后再拷贝所需文件到目标根文件系统</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install qemu-user-static    <span class="comment">#安装qemu</span></span><br><span class="line">sudo <span class="built_in">cp</span> /usr/bin/qemu-aarch64-static ./new/usr/bin/</span><br><span class="line">sudo <span class="built_in">cp</span> /usr/bin/qemu-arm-static ./new/usr/bin/</span><br><span class="line">sudo <span class="built_in">cp</span> ./new/etc/resolv.conf ./new/etc/resolv.conf.bak</span><br><span class="line">sudo <span class="built_in">cp</span> /etc/resolv.conf ./new/etc/resolv.conf</span><br><span class="line">sudo <span class="built_in">cp</span> qt_deb.tar.gz ./new/home/</span><br></pre></td></tr></table></figure></li>
+<li><p>重新挂载<code>/proc,/dev,/sys</code>节点，然后通过<code>chroot</code>到目标根文件系统中，就进入到了交叉编译环境</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -t proc /proc ./new/proc</span><br><span class="line">sudo mount -t sysfs /sys ./new/sys</span><br><span class="line">sudo mount -o <span class="built_in">bind</span> /dev ./new/dev</span><br><span class="line">sudo <span class="built_in">chroot</span> ./new/</span><br></pre></td></tr></table></figure></li>
+<li><p>在交叉编译环境中安装<code>qt_deb.tar.gz</code>中的所有<code>deb</code>包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo tar xzf /home/qt_deb.tar.gz</span><br><span class="line">sudo dpkg -i /home/qt_deb/*/deb</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>上述步骤安装完成之后，交叉编译环境就搭建完成了。</p>
+</li>
+</ul>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -197,376 +249,106 @@
 		</ul>
 	</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2023-03-31T01:32:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-31</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">C++命令模式</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2023-03-27T02:47:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/">opencv学习（四）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Opencv</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:18:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/">用C++实现事件监听器</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:12:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/">在linux下实现类似WaitForSingleObjectEx功能</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/" class="archive-article-date">
-  	<time datetime="2023-03-14T06:23:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/">使用C++11创建简易环形队列</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/" class="archive-article-date">
-  	<time datetime="2023-03-09T00:41:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-09</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/">C++单例模式模板类</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/" class="archive-article-date">
-  	<time datetime="2023-02-21T09:17:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/">QtConcurrent引发的崩溃</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/" class="archive-article-date">
-  	<time datetime="2023-02-15T07:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/">在aarch64麒麟V10上编译qt-5.9.8</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
+
       
+
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-  	<time datetime="2022-12-21T03:29:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/">shell获取桌面等路径</a>
-    </h1>
-  
+      </div>
+    </span>
+  </div>
+</div>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" alt="微信分享二维码">
+    </div>
+</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C++命令模式</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/6/">6</a><a class="extend next" rel="next" href="/archives/page/2/">下一页</a>
-    </nav>
   
 
+  
+
+  
 
 
           </div>
@@ -589,8 +371,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
