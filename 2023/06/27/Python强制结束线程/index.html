@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>随笔</title>
+  <title>Python强制结束线程 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/index.html">
+  <meta name="description" content="利用ctypes强行杀掉线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python强制结束线程">
+<meta property="og:url" content="https://yesir.github.io/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="利用ctypes强行杀掉线程">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-06-27T02:23:46.000Z">
+<meta property="article:modified_time" content="2023-06-27T02:28:32.347Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -156,16 +161,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-Python强制结束线程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-Python强制结束线程" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/">Python强制结束线程</a>
+    <h1 class="article-title" itemprop="name">
+      Python强制结束线程
     </h1>
   
 
@@ -179,11 +182,37 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>利用<code>ctypes</code>强行杀掉线程</p>
-        
-          <a class="article-more-a" href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/#more">more >></a>
-        
+<span id="more"></span>
+
+<p>import threading<br>import time<br>import inspect<br>import ctypes</p>
+<p>def _async_raise(tid, exctype):<br>    “””raises the exception, performs cleanup if needed”””<br>    tid = ctypes.c_long(tid)<br>    if not inspect.isclass(exctype):<br>        exctype = type(exctype)<br>    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))<br>    if res == 0:<br>        raise ValueError(“invalid thread id”)<br>    elif res != 1:<br>        # “””if it returns a number greater than one, you’re in trouble,<br>        # and you should call it again with exc=NULL to revert the effect”””<br>        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)<br>        raise SystemError(“PyThreadState_SetAsyncExc failed”)</p>
+<p>def stop_thread(thread):<br>    _async_raise(thread.ident, SystemExit)</p>
+<p>def thread_run(data):<br>    while True:<br>        print(data)</p>
+<p>if <strong>name</strong> == “<strong>main</strong>“:<br>    t = threading.Thread(target=thread_run,args=(“1”))<br>    t.start()<br>    time.sleep(1)<br>    stop_thread(t)<br>    print(“stoped”)<br>    time.sleep(2)<br>    t1 = threading.Thread(target=thread_run,args=(“2”))<br>    t1.start()<br>    time.sleep(0.001)<br>    stop_thread(t1)<br>    print(“stoped”)<br>    while True:<br>        pass</p>
+
       
 
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
       
     </div>
     <div class="article-info article-info-index">
@@ -203,16 +232,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/05/31/Win32-Dll%E4%B8%AD%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Win32 Dll中加载图片资源</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -232,698 +320,15 @@
 
 
 
-
-  
-    <article id="post-Win32-Dll中加载图片资源" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/05/31/Win32-Dll%E4%B8%AD%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90/">Win32 Dll中加载图片资源</a>
-    </h1>
-  
-
-        
-        <a href="/2023/05/31/Win32-Dll%E4%B8%AD%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90/" class="archive-article-date">
-  	<time datetime="2023-05-31T08:07:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>项目上有需求，要求在提供给第三方的SDK中，将bmp图像一起打包到dll文件中</p>
-        
-          <a class="article-more-a" href="/2023/05/31/Win32-Dll%E4%B8%AD%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/05/31/Win32-Dll%E4%B8%AD%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87%E8%B5%84%E6%BA%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-单实例进程的几种实现方式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/05/06/%E5%8D%95%E5%AE%9E%E4%BE%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">单实例进程的几种实现方式</a>
-    </h1>
-  
-
-        
-        <a href="/2023/05/06/%E5%8D%95%E5%AE%9E%E4%BE%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2023-05-06T01:29:04.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-05-06</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>让进程只运行一个实例,防止多次运行导致的问题</p>
-        
-          <a class="article-more-a" href="/2023/05/06/%E5%8D%95%E5%AE%9E%E4%BE%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/05/06/%E5%8D%95%E5%AE%9E%E4%BE%8B%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-用C-获取bmp图像的宽高" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/04/25/%E7%94%A8C-%E8%8E%B7%E5%8F%96bmp%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AE%BD%E9%AB%98/">用C++获取bmp图像的宽高</a>
-    </h1>
-  
-
-        
-        <a href="/2023/04/25/%E7%94%A8C-%E8%8E%B7%E5%8F%96bmp%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AE%BD%E9%AB%98/" class="archive-article-date">
-  	<time datetime="2023-04-25T00:55:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>BMP（Bitmap）是一种位图文件格式，它以二进制方式存储图像数据，即每个像素的颜色信息都被直接编码为一个二进制值。</p>
-        
-          <a class="article-more-a" href="/2023/04/25/%E7%94%A8C-%E8%8E%B7%E5%8F%96bmp%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AE%BD%E9%AB%98/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/04/25/%E7%94%A8C-%E8%8E%B7%E5%8F%96bmp%E5%9B%BE%E5%83%8F%E7%9A%84%E5%AE%BD%E9%AB%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-用C-实现类似Windows的消息循环" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/04/18/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWindows%E7%9A%84%E6%B6%88%E6%81%AF%E5%BE%AA%E7%8E%AF/">用C++实现类似Windows的消息循环</a>
-    </h1>
-  
-
-        
-        <a href="/2023/04/18/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWindows%E7%9A%84%E6%B6%88%E6%81%AF%E5%BE%AA%E7%8E%AF/" class="archive-article-date">
-  	<time datetime="2023-04-18T03:14:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>实现类似于Windows消息循环的队列</p>
-        
-          <a class="article-more-a" href="/2023/04/18/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWindows%E7%9A%84%E6%B6%88%E6%81%AF%E5%BE%AA%E7%8E%AF/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/04/18/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWindows%E7%9A%84%E6%B6%88%E6%81%AF%E5%BE%AA%E7%8E%AF/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-在ubuntu上搭建arm64交叉编译环境" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">在ubuntu上搭建arm64交叉编译环境</a>
-    </h1>
-  
-
-        
-        <a href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
-  	<time datetime="2023-04-03T01:08:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用环境<code>Ubuntu 20.04.3 LTS</code>,并在系统先安装好<code>Qt</code>,<code>QT Creator</code>开发工具、以及<code>qemu</code>用来加载<code>arm64</code>镜像</p>
-        
-          <a class="article-more-a" href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/04/03/%E5%9C%A8ubuntu%E4%B8%8A%E6%90%AD%E5%BB%BAarm64%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C-命令模式" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">C++命令模式</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/" class="archive-article-date">
-  	<time datetime="2023-03-31T01:32:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>命令模式的核心在于引入了命令类，通过命令类来降低请求发送者和接收者的耦合度，请求发送者只需要指定一个命令对象，再通过命令对象来调用请求接收者的处理方法</p>
-        
-          <a class="article-more-a" href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/31/C-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-opencv学习（四）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/">opencv学习（四）</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2023-03-27T02:47:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>OpenCV库打开摄像头并保存视频,只能保存为<code>avi</code>格式，最大保存文件大小为2Gb</p>
-        
-          <a class="article-more-a" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Opencv</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-用C-实现事件监听器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/">用C++实现事件监听器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:18:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>事件监听器是一种常见的设计模式，用于在对象之间建立一种松耦合的关系，当某个对象发生特定事件时，可以通知所有注册了该事件的监听器对象。</p>
-        
-          <a class="article-more-a" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-在linux下实现类似WaitForSingleObjectEx功能" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/">在linux下实现类似WaitForSingleObjectEx功能</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:12:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>利用pthread_cond_t在实现等待线程完成或超时，来达到类似WaitForSingleObjectEx的功能。</p>
-        
-          <a class="article-more-a" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
-    </nav>
   
 
+  
+
+  
+
+  
 
 
           </div>
@@ -945,8 +350,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
