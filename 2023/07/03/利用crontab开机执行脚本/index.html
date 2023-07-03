@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>Tag: 运维 | 随笔</title>
+  <title>利用crontab开机执行脚本 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/index.html">
+  <meta name="description" content="解决在定制的aarch64 uos系统中，开机启动手写输入法时添加到&#x2F;etc&#x2F;xdg&#x2F;autostart或&#x2F;home&#x2F;user&#x2F;.config&#x2F;autostart目录都启动不了的问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用crontab开机执行脚本">
+<meta property="og:url" content="https://yesir.github.io/2023/07/03/%E5%88%A9%E7%94%A8crontab%E5%BC%80%E6%9C%BA%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="解决在定制的aarch64 uos系统中，开机启动手写输入法时添加到&#x2F;etc&#x2F;xdg&#x2F;autostart或&#x2F;home&#x2F;user&#x2F;.config&#x2F;autostart目录都启动不了的问题">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-07-03T09:30:42.000Z">
+<meta property="article:modified_time" content="2023-07-03T09:35:40.089Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -156,160 +161,62 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-利用crontab开机执行脚本" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      利用crontab开机执行脚本
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/07/03/%E5%88%A9%E7%94%A8crontab%E5%BC%80%E6%9C%BA%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC/" class="archive-article-date">
+
+        
+        <a href="/2023/07/03/%E5%88%A9%E7%94%A8crontab%E5%BC%80%E6%9C%BA%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC/" class="archive-article-date">
   	<time datetime="2023-07-03T09:30:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-07-03</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/07/03/%E5%88%A9%E7%94%A8crontab%E5%BC%80%E6%9C%BA%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC/">利用crontab开机执行脚本</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
+        
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2023-06-27T02:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-06-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/">Python强制结束线程</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/" class="archive-article-date">
-  	<time datetime="2023-02-15T07:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/">在aarch64麒麟V10上编译qt-5.9.8</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
+    <div class="article-entry" itemprop="articleBody">
       
-        </div></section>
+        <p>解决在定制的<code>aarch64 uos</code>系统中，开机启动手写输入法时添加到<code>/etc/xdg/autostart</code>或<code>/home/user/.config/autostart</code>目录都启动不了的问题</p>
+<span id="more"></span>
+
+<p><code>crontab</code>定时任务任务分为脚本任务和系统自带命令<br>如果有这样一个脚本任务，仅仅需要开机后运行一次，那么，<code>crontab</code>结合<code>@reboot</code>是一个不错的选项。<br>如果是系统自带命令任务，<code>@reboot</code>不一定会执行，由于系统开机初始化，很有可能系统自带命令运行环境并不满足，但<code>crontab</code>已经开始执行<code>@reboot</code>，从而造成命令运行失败。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"><span class="comment">#进入编辑，输入如下行</span></span><br><span class="line">@reboot /home/test.sh <span class="comment">#开机马上启动这个脚本，如果脚本中有依赖系统中其他服务，会发生因为其他服务启动不完全，而导致自己脚本失败的情况</span></span><br><span class="line">@reboot <span class="built_in">sleep</span> 60; /home/test.sh <span class="comment">#最好加上休眠一会，等待其他服务启动完全了，再启动自己的脚本</span></span><br><span class="line">@reboot (<span class="built_in">sleep</span> 60; sh /home/test.sh) <span class="comment">#设置脚本在启动后的60s启动、/home\test.sh 就是脚本的存放地址</span></span><br></pre></td></tr></table></figure>
+
+
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-  	<time datetime="2022-12-21T03:29:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-21</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/">shell获取桌面等路径</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -321,262 +228,106 @@
 		</ul>
 	</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/" class="archive-article-date">
-  	<time datetime="2022-11-17T08:04:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-17</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/11/17/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AEsmb%E5%85%B1%E4%BA%AB%E6%9C%8D%E5%8A%A1/">树莓派配置smb共享服务</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/" class="archive-article-date">
-  	<time datetime="2022-11-09T09:35:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-11-09</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/11/09/%E4%BD%BF%E7%94%A8docker%E6%90%AD%E5%BB%BAgitlab/">使用docker搭建gitlab</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/" class="archive-article-date">
-  	<time datetime="2022-05-20T09:36:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-20</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/05/20/centos7-aarch64%E6%8D%A2%E6%BA%90/">centos7-aarch64换源</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/" class="archive-article-date">
-  	<time datetime="2022-05-17T07:34:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-05-17</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/05/17/%E5%AE%89%E8%A3%857-3-0%E7%89%88%E6%9C%ACgcc/">安装7.3.0版本gcc</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
       
-        </div></section>
+
       
+
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/12/24/%E5%88%B6%E4%BD%9Crpm%E5%8C%85/" class="archive-article-date">
-  	<time datetime="2021-12-24T10:47:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-24</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/12/24/%E5%88%B6%E4%BD%9Crpm%E5%8C%85/">制作rpm包</a>
-    </h1>
-  
+      </div>
+    </span>
+  </div>
+</div>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/07/03/%E5%88%A9%E7%94%A8crontab%E5%BC%80%E6%9C%BA%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC/" alt="微信分享二维码">
+    </div>
+</div>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/12/21/%E5%9C%A8Linux%E4%B8%AD%E6%A0%B9%E6%8D%AE%E7%9B%AE%E6%A0%87%E7%89%88%E6%9C%AC%E5%88%9B%E5%BB%BAso%E9%93%BE%E6%8E%A5/" class="archive-article-date">
-  	<time datetime="2021-12-21T10:52:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-12-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/06/27/Python%E5%BC%BA%E5%88%B6%E7%BB%93%E6%9D%9F%E7%BA%BF%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Python强制结束线程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/12/21/%E5%9C%A8Linux%E4%B8%AD%E6%A0%B9%E6%8D%AE%E7%9B%AE%E6%A0%87%E7%89%88%E6%9C%AC%E5%88%9B%E5%BB%BAso%E9%93%BE%E6%8E%A5/">在Linux中根据目标版本创建so链接</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/tags/%E8%BF%90%E7%BB%B4/page/2/">2</a><a class="extend next" rel="next" href="/tags/%E8%BF%90%E7%BB%B4/page/2/">下一页</a>
-    </nav>
   
 
+  
 
 
           </div>
@@ -599,9 +350,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
