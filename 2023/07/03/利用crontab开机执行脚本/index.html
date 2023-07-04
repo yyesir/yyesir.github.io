@@ -16,7 +16,7 @@
 <meta property="og:description" content="解决在定制的aarch64 uos系统中，开机启动手写输入法时添加到&#x2F;etc&#x2F;xdg&#x2F;autostart或&#x2F;home&#x2F;user&#x2F;.config&#x2F;autostart目录都启动不了的问题">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-07-03T09:30:42.000Z">
-<meta property="article:modified_time" content="2023-07-03T09:40:00.427Z">
+<meta property="article:modified_time" content="2023-07-04T07:57:44.954Z">
 <meta property="article:author" content="yesir">
 <meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
@@ -187,6 +187,10 @@
 <p><code>crontab</code>定时任务分为脚本任务和系统自带命令<br>如果有这样一个脚本任务，仅仅需要开机后运行一次，那么，<code>crontab</code>结合<code>@reboot</code>是一个不错的选择。<br>如果是系统自带命令任务，<code>@reboot</code>不一定会执行，由于系统开机初始化，很有可能系统自带命令运行环境并不满足，但<code>crontab</code>已经开始执行<code>@reboot</code>，从而造成命令运行失败。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"><span class="comment">#进入编辑，输入如下行</span></span><br><span class="line">@reboot /home/test.sh <span class="comment">#开机马上启动这个脚本，如果脚本中有依赖系统中其他服务，会发生因为其他服务启动不完全，而导致自己脚本失败的情况</span></span><br><span class="line">@reboot <span class="built_in">sleep</span> 60; /home/test.sh <span class="comment">#最好加上休眠一会，等待其他服务启动完全了，再启动自己的脚本</span></span><br><span class="line">@reboot (<span class="built_in">sleep</span> 60; sh /home/test.sh) <span class="comment">#设置脚本在启动后的60s启动、/home\test.sh 就是脚本的存放地址</span></span><br></pre></td></tr></table></figure>
 
+<blockquote>
+<p><code>shell</code>命令添加<code>crontab</code>任务</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">利用crontab -l 加 crontab file 两个命令实现自动添加</span><br><span class="line"></span><br><span class="line">crontab -l &gt; conf &amp;&amp; <span class="built_in">echo</span> <span class="string">&quot;* * * * * hostname &gt;&gt; /tmp/tmp.txt&quot;</span> &gt;&gt; conf &amp;&amp; crontab conf &amp;&amp; <span class="built_in">rm</span> -f conf</span><br><span class="line">由于crontab file会覆盖原有定时任务，所以使用 crontab -l 先导出原有任务到临时文件 “conf” 再追加新定时任务</span><br><span class="line"></span><br><span class="line">优点：不限用户，任何有crontab权限的用户都能执行</span><br><span class="line"></span><br><span class="line">缺点：稍微复杂</span><br></pre></td></tr></table></figure>
 
 
       
