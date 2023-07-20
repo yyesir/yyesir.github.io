@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>随笔</title>
+  <title>通过fcitx-dbus接口将文字写到输入框 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/page/2/index.html">
+  <meta name="description" content="使用DBus库与DBus系统通信，并使用fcitx的DBus接口发送相应的消息,从而实现将文字写到输入框">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过fcitx-dbus接口将文字写到输入框">
+<meta property="og:url" content="https://yesir.github.io/2023/07/20/%E9%80%9A%E8%BF%87fcitx-dbus%E6%8E%A5%E5%8F%A3%E5%B0%86%E6%96%87%E5%AD%97%E5%86%99%E5%88%B0%E8%BE%93%E5%85%A5%E6%A1%86/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="使用DBus库与DBus系统通信，并使用fcitx的DBus接口发送相应的消息,从而实现将文字写到输入框">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-07-20T06:19:04.000Z">
+<meta property="article:modified_time" content="2023-07-20T06:25:10.449Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -156,110 +161,62 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-opencv学习（四）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-通过fcitx-dbus接口将文字写到输入框" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/">opencv学习（四）</a>
+    <h1 class="article-title" itemprop="name">
+      通过fcitx-dbus接口将文字写到输入框
     </h1>
   
 
         
-        <a href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2023-03-27T02:47:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-27</time>
+        <a href="/2023/07/20/%E9%80%9A%E8%BF%87fcitx-dbus%E6%8E%A5%E5%8F%A3%E5%B0%86%E6%96%87%E5%AD%97%E5%86%99%E5%88%B0%E8%BE%93%E5%85%A5%E6%A1%86/" class="archive-article-date">
+  	<time datetime="2023-07-20T06:19:04.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-07-20</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>OpenCV库打开摄像头并保存视频,只能保存为<code>avi</code>格式，最大保存文件大小为2Gb</p>
-        
-          <a class="article-more-a" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/#more">more >></a>
-        
-      
+        <p>使用<code>DBus</code>库与<code>DBus</code>系统通信，并使用<code>fcitx</code>的<code>DBus接口</code>发送相应的消息,从而实现将文字写到输入框</p>
+<span id="more"></span>
+<blockquote>
+<p>以下是简单的代码示例:</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;dbus/dbus.h&gt;</span></span><br><span class="line"></span><br><span class="line">void send_chinese_input(const char* input_text) &#123;</span><br><span class="line">    DBusConnection* connection;</span><br><span class="line">    DBusError error;</span><br><span class="line">    dbus_error_init(&amp;error);</span><br><span class="line"></span><br><span class="line">    // 建立与DBus系统的连接</span><br><span class="line">    connection = dbus_bus_get(DBUS_BUS_SESSION, &amp;error);</span><br><span class="line">    <span class="keyword">if</span> (dbus_error_is_set(&amp;error)) &#123;</span><br><span class="line">        fprintf(stderr, <span class="string">&quot;Unable to connect to the D-Bus session bus: %s\n&quot;</span>, error.message);</span><br><span class="line">        dbus_error_free(&amp;error);</span><br><span class="line">        <span class="built_in">exit</span>(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 创建一个DBus消息</span><br><span class="line">    DBusMessage* message;</span><br><span class="line">    message = dbus_message_new_method_call(</span><br><span class="line">        <span class="string">&quot;org.fcitx.Fcitx&quot;</span>,                           // 接口所在的DBus名称</span><br><span class="line">        <span class="string">&quot;/inputmethod&quot;</span>,                              // 接口对象的路径</span><br><span class="line">        <span class="string">&quot;org.fcitx.Fcitx.InputMethod1&quot;</span>,               // 接口名称</span><br><span class="line">        <span class="string">&quot;ProcessKeyEvent&quot;</span>                            // 方法名称</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">	// 如果只发送按键，添加方法参数（按键值和状态）</span><br><span class="line">    //dbus_uint32_t keyval = 65;  // 示例按键值为<span class="string">&#x27;A&#x27;</span></span><br><span class="line">    //dbus_uint32_t keycode = 38; // 示例按键码为<span class="string">&#x27;KEY_A&#x27;</span>（可以根据需要更改）</span><br><span class="line">    //dbus_uint32_t state = 0;    // 示例状态为0（可以根据需要更改）</span><br><span class="line"></span><br><span class="line">    // 添加方法参数（中文输入文本）</span><br><span class="line">    dbus_uint32_t keyval = 0;  				</span><br><span class="line">    dbus_uint32_t keycode = 0;</span><br><span class="line">    dbus_uint32_t state = 0;</span><br><span class="line">    const char* utf8_text = input_text;</span><br><span class="line"></span><br><span class="line">    dbus_message_append_args(</span><br><span class="line">        message,</span><br><span class="line">        DBUS_TYPE_UINT32, &amp;keyval,</span><br><span class="line">        DBUS_TYPE_UINT32, &amp;keycode,</span><br><span class="line">        DBUS_TYPE_UINT32, &amp;state,</span><br><span class="line">        DBUS_TYPE_STRING, &amp;utf8_text,</span><br><span class="line">        DBUS_TYPE_INVALID</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // 发送DBus消息，并等待响应</span><br><span class="line">    DBusPendingCall* pending;</span><br><span class="line">    dbus_connection_send_with_reply(connection, message, &amp;pending, -1);</span><br><span class="line">    dbus_connection_flush(connection);</span><br><span class="line"></span><br><span class="line">    // 等待DBus响应</span><br><span class="line">    dbus_pending_call_block(pending);</span><br><span class="line"></span><br><span class="line">    // 获取DBus响应</span><br><span class="line">    DBusMessage* reply = dbus_pending_call_steal_reply(pending);</span><br><span class="line">    <span class="keyword">if</span> (reply) &#123;</span><br><span class="line">        dbus_message_unref(reply);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 释放资源</span><br><span class="line">    dbus_message_unref(message);</span><br><span class="line">    dbus_pending_call_unref(pending);</span><br><span class="line">    dbus_connection_unref(connection);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int <span class="function"><span class="title">main</span></span>() &#123;</span><br><span class="line">    // 要输入的中文文本</span><br><span class="line">    const char* chinese_text = <span class="string">&quot;你好，世界！&quot;</span>;</span><br><span class="line"></span><br><span class="line">    // 发送中文输入</span><br><span class="line">    send_chinese_input(chinese_text);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>编译方法:</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o fcitx_test fcitx_test.c `pkg-config --libs --cflags dbus-1`</span><br></pre></td></tr></table></figure>
 
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Opencv</a>
-        		</li>
-      		
-		</ul>
-	</div>
+
 
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/27/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%9B%9B%EF%BC%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
         </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-用C-实现事件监听器" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/">用C++实现事件监听器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:18:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>事件监听器是一种常见的设计模式，用于在对象之间建立一种松耦合的关系，当某个对象发生特定事件时，可以通知所有注册了该事件的监听器对象。</p>
-        
-          <a class="article-more-a" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/#more">more >></a>
-        
-      
-
       
     </div>
     <div class="article-info article-info-index">
@@ -279,16 +236,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/16/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E5%99%A8/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/07/20/%E9%80%9A%E8%BF%87fcitx-dbus%E6%8E%A5%E5%8F%A3%E5%B0%86%E6%96%87%E5%AD%97%E5%86%99%E5%88%B0%E8%BE%93%E5%85%A5%E6%A1%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/07/06/Win32%E5%88%A9%E7%94%A8%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8UI%E7%A8%8B%E5%BA%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Win32利用计划任务开机启动UI程序</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -308,622 +324,15 @@
 
 
 
-
-  
-    <article id="post-在linux下实现类似WaitForSingleObjectEx功能" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/">在linux下实现类似WaitForSingleObjectEx功能</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/" class="archive-article-date">
-  	<time datetime="2023-03-16T06:12:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>利用pthread_cond_t在实现等待线程完成或超时，来达到类似WaitForSingleObjectEx的功能。</p>
-        
-          <a class="article-more-a" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/16/%E5%9C%A8linux%E4%B8%8B%E5%AE%9E%E7%8E%B0%E7%B1%BB%E4%BC%BCWaitForSingleObjectEx%E5%8A%9F%E8%83%BD/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-使用C-11创建简易环形队列" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/">使用C++11创建简易环形队列</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/" class="archive-article-date">
-  	<time datetime="2023-03-14T06:23:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用<code>std::vector</code>来实现环形队列</p>
-        
-          <a class="article-more-a" href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/14/%E4%BD%BF%E7%94%A8C-11%E5%88%9B%E5%BB%BA%E7%AE%80%E6%98%93%E7%8E%AF%E5%BD%A2%E9%98%9F%E5%88%97/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C-单例模式模板类" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/">C++单例模式模板类</a>
-    </h1>
-  
-
-        
-        <a href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/" class="archive-article-date">
-  	<time datetime="2023-03-09T00:41:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>记录C++单例模式，模板方法类</p>
-        
-          <a class="article-more-a" href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-QtConcurrent引发的崩溃" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/">QtConcurrent引发的崩溃</a>
-    </h1>
-  
-
-        
-        <a href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/" class="archive-article-date">
-  	<time datetime="2023-02-21T09:17:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>使用QtConcurrent创建线程的一些问题总结</p>
-        
-          <a class="article-more-a" href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/02/21/QtConcurrent%E5%BC%95%E5%8F%91%E7%9A%84%E5%B4%A9%E6%BA%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-在aarch64麒麟V10上编译qt-5-9-8" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/">在aarch64麒麟V10上编译qt-5.9.8</a>
-    </h1>
-  
-
-        
-        <a href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/" class="archive-article-date">
-  	<time datetime="2023-02-15T07:55:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>记录在麒麟V10<code>aarch64/Phytium,FT-2000/4</code>上编译<code>Qt-5.9.8</code></p>
-        
-          <a class="article-more-a" href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/02/15/%E5%9C%A8aarch64%E9%BA%92%E9%BA%9FV10%E4%B8%8A%E7%BC%96%E8%AF%91qt-5-9-8/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-shell获取桌面等路径" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/">shell获取桌面等路径</a>
-    </h1>
-  
-
-        
-        <a href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/" class="archive-article-date">
-  	<time datetime="2022-12-21T03:29:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在不知道当前用户的情况下，需要将文件拷贝到桌面这一级目录时，可以利用<code>~/.config/user-dirs.dirs</code>配置文件来获取</p>
-        
-          <a class="article-more-a" href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-opencv学习（三）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/12/16/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%89%EF%BC%89/">opencv学习（三）</a>
-    </h1>
-  
-
-        
-        <a href="/2022/12/16/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%89%EF%BC%89/" class="archive-article-date">
-  	<time datetime="2022-12-16T06:25:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>cv::Mat</code>与<code>QImage</code>相互转化</p>
-        
-          <a class="article-more-a" href="/2022/12/16/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%89%EF%BC%89/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Opencv</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/12/16/opencv%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%89%EF%BC%89/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-std-async获取异步执行结果和状态" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/">std::async获取异步执行结果和状态</a>
-    </h1>
-  
-
-        
-        <a href="/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/" class="archive-article-date">
-  	<time datetime="2022-12-09T00:44:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>简单来讲<code>std::async</code>是对<code>std::future、std::promise和std::packaged_task</code>的一个包装，将异步操作用<code>std::packaged_task</code>包装起来，然后将异步操作的结果放到<code>std::promise</code>中,在外层通过std::future.get/wait来获取结果。</p>
-        
-          <a class="article-more-a" href="/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2022/12/09/std-async%E8%8E%B7%E5%8F%96%E5%BC%82%E6%AD%A5%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E7%8A%B6%E6%80%81/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
-    </nav>
   
 
+  
+
+  
+
+  
 
 
           </div>
@@ -945,8 +354,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
