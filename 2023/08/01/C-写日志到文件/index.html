@@ -6,14 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>Archives | 随笔</title>
+  <title>C++写日志到文件 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="随笔">
-<meta property="og:url" content="https://yesir.github.io/archives/page/7/index.html">
+  <meta name="description" content="利用fprintf及可变参数来实现日志功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++写日志到文件">
+<meta property="og:url" content="https://yesir.github.io/2023/08/01/C-%E5%86%99%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="随笔">
+<meta property="og:description" content="利用fprintf及可变参数来实现日志功能">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-08-01T07:15:35.000Z">
+<meta property="article:modified_time" content="2023-08-01T07:25:18.446Z">
 <meta property="article:author" content="yesir">
+<meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -156,36 +161,77 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-C-写日志到文件" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      C++写日志到文件
+    </h1>
+  
+
+        
+        <a href="/2023/08/01/C-%E5%86%99%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6/" class="archive-article-date">
+  	<time datetime="2023-08-01T07:15:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-08-01</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>利用<code>fprintf</code>及可变参数来实现日志功能</p>
+<span id="more"></span>
+
+<blockquote>
+<p>先封装一个<code>lock</code>类，用于同步写文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ifndef __H_AEYE_LOCKER__</span></span><br><span class="line"><span class="comment">#define __H_AEYE_LOCKER__</span></span><br><span class="line"><span class="comment">#include &lt;pthread.h&gt;</span></span><br><span class="line"></span><br><span class="line">class Locker</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    inline <span class="function"><span class="title">Locker</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_mutex_init(&amp;mutex, NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    inline ~<span class="function"><span class="title">Locker</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_mutex_destroy(&amp;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    inline void <span class="function"><span class="title">lock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_mutex_lock(&amp;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    inline bool <span class="function"><span class="title">tryLock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">return</span> (pthread_mutex_trylock(&amp;mutex) == 0);</span><br><span class="line">    &#125;</span><br><span class="line">    inline void <span class="function"><span class="title">unlock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">private:</span><br><span class="line">    pthread_mutex_t mutex;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class RwLocker</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    inline <span class="function"><span class="title">RwLocker</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_rwlock_init(&amp;rwLocker, NULL);</span><br><span class="line">    &#125;</span><br><span class="line">    inline ~<span class="function"><span class="title">RwLocker</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_rwlock_destroy(&amp;rwLocker);</span><br><span class="line">    &#125;</span><br><span class="line">    inline void <span class="function"><span class="title">rLock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_rwlock_rdlock(&amp;rwLocker);</span><br><span class="line">    &#125;</span><br><span class="line">    inline void <span class="function"><span class="title">wLock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_rwlock_wrlock(&amp;rwLocker);</span><br><span class="line">    &#125;</span><br><span class="line">    inline bool <span class="function"><span class="title">tryRLock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">return</span> (pthread_rwlock_tryrdlock(&amp;rwLocker) == 0);</span><br><span class="line">    &#125;</span><br><span class="line">    inline bool <span class="function"><span class="title">tryWLock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">return</span> (pthread_rwlock_trywrlock(&amp;rwLocker) == 0);</span><br><span class="line">    &#125;</span><br><span class="line">    inline void <span class="function"><span class="title">unlock</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        pthread_rwlock_unlock(&amp;rwLocker);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    pthread_rwlock_t rwLocker;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">#endif</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>对外接口，日志类头文件,这里使用了单实例类</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ifndef __H_AEYE_LOG__</span></span><br><span class="line"><span class="comment">#define __H_AEYE_LOG__</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;string.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;pthread.h&gt;</span></span><br><span class="line"><span class="comment">#include &quot;locker.h&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LEVEL_NONE  0</span></span><br><span class="line"><span class="comment">#define LEVEL_ERROR 1</span></span><br><span class="line"><span class="comment">#define LEVEL_ALARM 2</span></span><br><span class="line"><span class="comment">#define LEVEL_PROMT 3</span></span><br><span class="line"><span class="comment">#define LEVEL_TRACE 4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOG(LEVEL, FMT, ...) \</span></span><br><span class="line">    <span class="keyword">do</span> &#123; \</span><br><span class="line">        <span class="keyword">if</span> (NULL != FMT) &#123; \</span><br><span class="line">            Logger::Log::getInstance().writeLine(LEVEL, __func__, __LINE__, FMT, <span class="comment">## __VA_ARGS__); \</span></span><br><span class="line">        &#125; \</span><br><span class="line">    &#125; <span class="keyword">while</span>(0)</span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOGN(FMT, ...) LOG(LEVEL_NONE, FMT, ## __VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOGE(FMT, ...) LOG(LEVEL_ERROR, FMT, ## __VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOGA(FMT, ...) LOG(LEVEL_ALARM, FMT, ## __VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOGP(FMT, ...) LOG(LEVEL_PROMT, FMT, ## __VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define LOGT(FMT, ...) LOG(LEVEL_TRACE, FMT, ## __VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define NO_CONSTRUCT_FUN_MACRO(C) \</span></span><br><span class="line">public: \</span><br><span class="line">    C(const C&amp;) = delete; \</span><br><span class="line">    C&amp; operator=(const C&amp;) = delete;</span><br><span class="line"></span><br><span class="line"><span class="comment">#define INHERIT_SINGLETON_MACRO(C) \</span></span><br><span class="line">    friend class Singleton&lt;C&gt;; \</span><br><span class="line">    NO_CONSTRUCT_FUN_MACRO(C)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">template&lt;typename T&gt;</span><br><span class="line">class Singleton</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">    static T&amp; <span class="function"><span class="title">getInstance</span></span>()</span><br><span class="line">    &#123;</span><br><span class="line">        static T instance;</span><br><span class="line">        <span class="built_in">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">    NO_CONSTRUCT_FUN_MACRO(Singleton);</span><br><span class="line">protected:</span><br><span class="line">    <span class="function"><span class="title">Singleton</span></span>()&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">namespace Logger</span><br><span class="line">&#123;</span><br><span class="line">class Log : public Singleton&lt;Log&gt;</span><br><span class="line">&#123;</span><br><span class="line">    INHERIT_SINGLETON_MACRO(Log);</span><br><span class="line">public:</span><br><span class="line"></span><br><span class="line">    void setLevel(int level);</span><br><span class="line"></span><br><span class="line">    void writeLine(int level, const char *func_name, unsigned int line, const char *<span class="built_in">fmt</span>, ...);</span><br><span class="line"></span><br><span class="line">private:</span><br><span class="line">    FILE *m_pLogFile;</span><br><span class="line">    int m_level;</span><br><span class="line">    Locker m_LogLocker;</span><br><span class="line">    Locker m_TimeLogLocker;</span><br><span class="line"></span><br><span class="line">    Log(const char* logName = <span class="string">&quot;./log.log&quot;</span>);</span><br><span class="line">    ~Log();</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">#endif</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>具体的实现，将内容输出到文件</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &quot;log.h&quot;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;pthread.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;sys/time.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdarg.h&gt;</span></span><br><span class="line"></span><br><span class="line">namespace Logger</span><br><span class="line">&#123;</span><br><span class="line">Log::Log(const char* logName)</span><br><span class="line">&#123;</span><br><span class="line">    m_pLogFile = NULL;</span><br><span class="line">    m_level = LEVEL_PROMT;</span><br><span class="line"></span><br><span class="line"><span class="comment">#ifdef LOG_FILE</span></span><br><span class="line">    m_pLogFile = fopen(logName, <span class="string">&quot;w+&quot;</span>);</span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Log::~<span class="function"><span class="title">Log</span></span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (NULL != m_pLogFile)</span><br><span class="line">    &#123;</span><br><span class="line">        fclose(m_pLogFile);</span><br><span class="line">        m_pLogFile = NULL;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Log::writeLine(int level, const char *func_name, unsigned int line, const char *<span class="built_in">fmt</span>, ...)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (level &gt; m_level)</span><br><span class="line">        <span class="built_in">return</span>;</span><br><span class="line"></span><br><span class="line">    va_list ap;</span><br><span class="line">    va_start(ap, <span class="built_in">fmt</span>);</span><br><span class="line">    struct timespec current_time;</span><br><span class="line">	struct tm format_time;</span><br><span class="line">	memset(&amp;current_time, 0, sizeof(current_time));</span><br><span class="line">	clock_gettime(CLOCK_REALTIME, &amp;current_time);</span><br><span class="line">	localtime_r(&amp;current_time.tv_sec, &amp;format_time);</span><br><span class="line">    <span class="keyword">if</span> (NULL != m_pLogFile)</span><br><span class="line">    &#123;</span><br><span class="line">        m_LogLocker.lock();</span><br><span class="line">        fprintf(m_pLogFile, <span class="string">&quot;[%02d-%02d-%02d %02d:%02d:%02d.%ld] [%s] [%d] &quot;</span>, format_time.tm_year+1900,</span><br><span class="line">            format_time.tm_mon+1,</span><br><span class="line">            format_time.tm_mday,</span><br><span class="line">            format_time.tm_hour,</span><br><span class="line">            format_time.tm_min,</span><br><span class="line">            format_time.tm_sec,</span><br><span class="line">            current_time.tv_nsec,</span><br><span class="line">            func_name,</span><br><span class="line">            line);</span><br><span class="line">        vfprintf(m_pLogFile, <span class="built_in">fmt</span>, ap);</span><br><span class="line">        fprintf(m_pLogFile, <span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        fflush(m_pLogFile);</span><br><span class="line">        m_LogLocker.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        vprintf(<span class="built_in">fmt</span>, ap);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    va_end(ap);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Log::setLevel(int level)</span><br><span class="line">&#123;</span><br><span class="line">    m_level = level;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>以上就是简单的日志类，当然还可以进一步实现根据日期每天创建单独的日志文件，也可以根据文件大小，写多个日志文件</p>
+</blockquote>
+<ul>
+<li>使用方法如下:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#include &quot;log.h&quot;</span></span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[])</span><br><span class="line">&#123;</span><br><span class="line">    LOG(LEVEL_ERROR, <span class="string">&quot;%s&quot;</span>, <span class="string">&quot;init begin.&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/10/C-windows%E9%80%9A%E7%94%A8%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2%E5%B7%A5%E5%85%B7%E7%B1%BB/" class="archive-article-date">
-  	<time datetime="2021-11-10T11:20:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-10</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/10/C-windows%E9%80%9A%E7%94%A8%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2%E5%B7%A5%E5%85%B7%E7%B1%BB/">C++ windows通用编码转换工具类</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -197,252 +243,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2023/08/01/C-%E5%86%99%E6%97%A5%E5%BF%97%E5%88%B0%E6%96%87%E4%BB%B6/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/09/C-windows%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%B0JsonCpp/" class="archive-article-date">
-  	<time datetime="2021-11-09T11:34:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-09</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/07/21/%E6%B7%BB%E5%8A%A0win%E5%8F%B3%E9%94%AE%E8%8F%9C%E5%8D%95%E6%89%93%E5%BC%80CMD/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">添加win右键菜单打开CMD</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/09/C-windows%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%88%B0JsonCpp/">C++ windows加载配置文件到JsonCpp</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/06/detours%E9%92%A9%E5%AD%90%E8%8E%B7%E5%8F%96%E5%89%AA%E5%88%87%E6%9D%BF%E5%86%85%E5%AE%B9/" class="archive-article-date">
-  	<time datetime="2021-11-06T05:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-06</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/06/detours%E9%92%A9%E5%AD%90%E8%8E%B7%E5%8F%96%E5%89%AA%E5%88%87%E6%9D%BF%E5%86%85%E5%AE%B9/">detours钩子获取剪切板内容</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/11/03/%E8%AE%B0%E5%BD%95%E9%B2%B2%E9%B9%8F9000%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E7%BC%96%E8%AF%91opencv3-4-3/" class="archive-article-date">
-  	<time datetime="2021-11-03T11:17:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-11-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/11/03/%E8%AE%B0%E5%BD%95%E9%B2%B2%E9%B9%8F9000%E9%BA%92%E9%BA%9F%E7%B3%BB%E7%BB%9F%E7%BC%96%E8%AF%91opencv3-4-3/">记录各种国产系统编译opencv3.4.3</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/31/Linux-C-%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E5%8D%95%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95/" class="archive-article-date">
-  	<time datetime="2021-10-31T02:06:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-31</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/31/Linux-C-%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E5%8D%95%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95/">Linux C 一种实现单实例的方法</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">C/C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/30/%E8%AE%B0%E5%BD%95ssh%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/" class="archive-article-date">
-  	<time datetime="2021-10-30T01:38:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-30</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/30/%E8%AE%B0%E5%BD%95ssh%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C/">记录ssh相关操作</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
-  	<time datetime="2021-10-29T11:28:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">安装交叉编译环境</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">运维</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/6/">上一页</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/5/">5</a><a class="page-number" href="/archives/page/6/">6</a><span class="page-number current">7</span>
-    </nav>
-  
-
 
 
           </div>
@@ -465,8 +365,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
