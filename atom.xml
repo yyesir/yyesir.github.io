@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2023-08-23T06:17:39.853Z</updated>
+  <updated>2023-09-18T08:26:07.112Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++一种动态库接口的做法</title>
+    <link href="https://yesir.github.io/2023/09/18/C-%E4%B8%80%E7%A7%8D%E5%8A%A8%E6%80%81%E5%BA%93%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%81%9A%E6%B3%95/"/>
+    <id>https://yesir.github.io/2023/09/18/C-%E4%B8%80%E7%A7%8D%E5%8A%A8%E6%80%81%E5%BA%93%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%81%9A%E6%B3%95/</id>
+    <published>2023-09-18T08:24:50.000Z</published>
+    <updated>2023-09-18T08:26:07.112Z</updated>
+    
+    <content type="html"><![CDATA[<p>为了不破坏二进制的兼容性，通常不建议使用抽象类的方式</p><span id="more"></span><ol><li>头文件定义</li></ol>  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifndef</span> _ADD_H__</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> _ADD_H__</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>();</span><br><span class="line">~<span class="built_in">A</span>();</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Impl</span>;    <span class="comment">//头文件中只放</span></span><br><span class="line">std::unique_ptr&lt;Impl&gt; impl;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure><ol start="2"><li>实现</li></ol><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>::Impl</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">Add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">A::<span class="built_in">A</span>():<span class="built_in">impl</span>(<span class="keyword">new</span> Impl)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">A::~<span class="built_in">A</span>()</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">A::Add</span><span class="params">(<span class="type">int</span> a, <span class="type">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> impl-&gt;<span class="built_in">Add</span>(a, b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> A::Impl::<span class="built_in">Add</span>(<span class="type">int</span> a, <span class="type">int</span> b)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">return</span> a * b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><blockquote><p>编译成so库<code>g++ add.cpp -shared -o libadd.so</code></p><p>使用<code>g++ main.cpp -o main -L. -ladd -Wl,-rpath=.</code></p></blockquote><ul><li>使用示例</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;add.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">A a;</span><br><span class="line">std::cout &lt;&lt; a.<span class="built_in">Add</span>(<span class="number">1</span>, <span class="number">2</span>) &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;为了不破坏二进制的兼容性，通常不建议使用抽象类的方式&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
+    
+  </entry>
   
   <entry>
     <title>C++写日志到文件</title>
@@ -371,25 +390,6 @@
     
     
     <summary type="html">&lt;p&gt;记录在麒麟V10&lt;code&gt;aarch64/Phytium,FT-2000/4&lt;/code&gt;上编译&lt;code&gt;Qt-5.9.8&lt;/code&gt;&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="运维" scheme="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>shell获取桌面等路径</title>
-    <link href="https://yesir.github.io/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/"/>
-    <id>https://yesir.github.io/2022/12/21/shell%E8%8E%B7%E5%8F%96%E6%A1%8C%E9%9D%A2%E7%AD%89%E8%B7%AF%E5%BE%84/</id>
-    <published>2022-12-21T03:29:51.000Z</published>
-    <updated>2022-12-21T03:33:13.488Z</updated>
-    
-    <content type="html"><![CDATA[<p>在不知道当前用户的情况下，需要将文件拷贝到桌面这一级目录时，可以利用<code>~/.config/user-dirs.dirs</code>配置文件来获取</p><span id="more"></span><blockquote><p>脚本如下:</p></blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">desk=`<span class="built_in">cat</span> <span class="variable">$HOME</span>/.config/user-dirs.dirs | grep DESKTOP | <span class="built_in">tail</span>  -1  |<span class="built_in">cut</span> -d <span class="string">&#x27;=&#x27;</span> -f 2  | sed <span class="string">&#x27;s/\&quot;//g&#x27;</span>`</span><br><span class="line">var=`<span class="built_in">eval</span> <span class="built_in">echo</span> <span class="variable">$desk</span>`</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$var</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;在不知道当前用户的情况下，需要将文件拷贝到桌面这一级目录时，可以利用&lt;code&gt;~/.config/user-dirs.dirs&lt;/code&gt;配置文件来获取&lt;/p&gt;</summary>
     
     
     
