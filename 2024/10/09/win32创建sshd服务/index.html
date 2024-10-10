@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>创建自己的云手机 | 随笔</title>
+  <title>win32创建sshd服务 | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid">
+  <meta name="description" content="1、获取所需的Openssh文件,微软的PowerShell团队已经支持openssh，所以安装文件我们可以在github的powershell团队项目下进行下载下载地址： https:&#x2F;&#x2F;github.com&#x2F;PowerShell&#x2F;Win32-OpenSSH&#x2F;releases根据你自己的系统对应下载   2、安装OpenSSH这一步非常简单，只用把下载好的压缩文件解压出来即可。首先已经下载好O">
 <meta property="og:type" content="article">
-<meta property="og:title" content="创建自己的云手机">
-<meta property="og:url" content="https://yesir.github.io/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/index.html">
+<meta property="og:title" content="win32创建sshd服务">
+<meta property="og:url" content="https://yesir.github.io/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/index.html">
 <meta property="og:site_name" content="随笔">
-<meta property="og:description" content="两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid">
+<meta property="og:description" content="1、获取所需的Openssh文件,微软的PowerShell团队已经支持openssh，所以安装文件我们可以在github的powershell团队项目下进行下载下载地址： https:&#x2F;&#x2F;github.com&#x2F;PowerShell&#x2F;Win32-OpenSSH&#x2F;releases根据你自己的系统对应下载   2、安装OpenSSH这一步非常简单，只用把下载好的压缩文件解压出来即可。首先已经下载好O">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-05-11T07:54:03.000Z">
-<meta property="article:modified_time" content="2024-05-11T07:55:56.927Z">
+<meta property="article:published_time" content="2024-10-09T08:45:46.000Z">
+<meta property="article:modified_time" content="2024-10-09T09:05:01.666Z">
 <meta property="article:author" content="yesir">
 <meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
@@ -161,110 +161,44 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-创建自己的云手机" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-win32创建sshd服务" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      创建自己的云手机
+      win32创建sshd服务
     </h1>
   
 
         
-        <a href="/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/" class="archive-article-date">
-  	<time datetime="2024-05-11T07:54:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-11</time>
+        <a href="/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/" class="archive-article-date">
+  	<time datetime="2024-10-09T08:45:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-10-09</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid</p>
-<span id="more"></span>
+        <blockquote>
+<p>1、获取所需的Openssh文件,微软的PowerShell团队已经支持openssh，所以安装文件我们可以在github的powershell团队项目下进行下载<br>下载地址： <a target="_blank" rel="noopener" href="https://github.com/PowerShell/Win32-OpenSSH/releases">https://github.com/PowerShell/Win32-OpenSSH/releases</a><br>根据你自己的系统对应下载</p>
+</blockquote>
+<blockquote>
+<p>2、安装OpenSSH<br>这一步非常简单，只用把下载好的压缩文件解压出来即可。<br>首先已经下载好OpenSSH，并且进行解压<br>把OpenSSH整个目录进行复制到 C:\Program Files (其实哪个目录都可以，不过建议安装在这里，免得出问题)</p>
+</blockquote>
+<blockquote>
+<p>3、配置参数<br>单击计算机，右键 –&gt; 属性 –&gt; 高级系统设置 –&gt; 环境变量–系统变量，在此框里面找到 Path 进行编辑，windows7系统编辑时候是以文本形式，所以就需要在最后先添加 “； ” 英文分号��再把你安装路径 如 C:\Program Files\OpenSSH-Win64 粘贴进去。windows 10系统添加比较方便，进到Path里面���点击-新建直接粘贴进去！</p>
+</blockquote>
+<blockquote>
+<p>4、发布ssh服务<br>打开系统CMD界面依次执行一下命令</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">shd服务</span><br><span class="line">powershell.exe -ExecutionPolicy Bypass -File install-sshd.ps1</span><br><span class="line"></span><br><span class="line">2）开放22号端口（如果你在windows关闭了防火墙并配置了入站规则可以不执行如下命令，多执行不影响）</span><br><span class="line">netsh advfirewall firewall add rule name=sshd dir=in action=allow protocol=TCP localport=22</span><br><span class="line"></span><br><span class="line">3）配置开机自启sshd服务</span><br><span class="line">sc config sshd start= auto</span><br><span class="line"></span><br><span class="line">4) 开启服务</span><br><span class="line">net start sshd</span><br><span class="line"></span><br><span class="line">第一次安装完服务之后还需要手动打开一下服务，后面配置过自启之后就不用管了。</span><br><span class="line"></span><br><span class="line">5）验证一下端口</span><br><span class="line">打开cmd，使用netstat -an命令查看一下本机的22端口是否被监听。</span><br></pre></td></tr></table></figure>
 
-<h1 id="利用旧安卓手机，制作自己的云手机"><a href="#利用旧安卓手机，制作自己的云手机" class="headerlink" title="利用旧安卓手机，制作自己的云手机"></a>利用旧安卓手机，制作自己的云手机</h1><ol>
-<li><p>首先，下载好scrcpy-win64，并将安装目录添加到系统环境变量</p>
-</li>
-<li><p>其次，手机USB数据线连接电脑，并在手机上打开usb调试</p>
-</li>
-<li><p>接着，执行如下命令：</p>
-</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb tcpip 5555</span><br></pre></td></tr></table></figure>
 
-<ol start="4">
-<li>然后，查看手机IP，并拔掉USB数据线：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">adb connect 192.168.1.55:5555</span><br><span class="line"></span><br><span class="line">显示connected 成功后执行命令:</span><br><span class="line"></span><br><span class="line">scrcpy</span><br></pre></td></tr></table></figure>
 
-<ol start="5">
-<li>至此，基本部署均已完成，拖动apk文件到scrcpy手机窗口即可安装应用。</li>
-</ol>
-<h1 id="将手机调试端口通过frp映射到公网"><a href="#将手机调试端口通过frp映射到公网" class="headerlink" title="将手机调试端口通过frp映射到公网"></a>将手机调试端口通过frp映射到公网</h1><ol>
-<li>首先需要一台云服务器，并将防火墙开放tcp：5554 5555端口</li>
-<li>在云服务器上安装frp server端,具体端口配置如下</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th align="center">其它手机或电脑</th>
-<th align="center"></th>
-<th align="center">FRP SERVER</th>
-<th align="center"></th>
-<th align="center">FRP CLIENT</th>
-<th align="center"></th>
-<th align="center">安卓手机</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">5554</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">RAND PORT1</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">RAND PORT</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">5555</td>
-<td align="center"></td>
-<td align="center">RAND PORT2</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">5555</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 7 x64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载程序并解压</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/share</span><br><span class="line">curl -LO https://github.com/fatedier/frp/releases/download/v0.35.1/frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line">tar xzvf frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line"><span class="built_in">rm</span> -f frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line"><span class="built_in">mv</span> frp_0.35.1_linux_amd64 frp</span><br><span class="line"><span class="built_in">cd</span> frp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line"><span class="built_in">cat</span> &gt; frps.ini &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[common]</span></span><br><span class="line"><span class="string">bind_port = 5554   ; FRP 端口</span></span><br><span class="line"><span class="string">token = your-token ; FRP 密码</span></span><br><span class="line"><span class="string">tcp_mux = false</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加自启服务</span></span><br><span class="line"><span class="built_in">cat</span> &gt; /etc/systemd/system/frp.service &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=Frp Service</span></span><br><span class="line"><span class="string">Requires=network-online.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">PIDFile=/run/frp.pid</span></span><br><span class="line"><span class="string">ExecStart=/usr/local/share/frp/frps -c /usr/local/share/frp/frps.ini</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> --now frp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">firewall-cmd --zone=public --add-port=5554/tcp,5555/tcp --permanent</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
 
-<ol start="3">
-<li><p>在安卓手机同一网络环境安装frp客户端，下载并解压 <a target="_blank" rel="noopener" href="https://logi.im/go/aHR0cHM6Ly9naXRodWIuY29tL2ZhdGVkaWVyL2ZycC9yZWxlYXNlcy9kb3dubG9hZC92MC4zNS4xL2ZycF8wLjM1LjFfd2luZG93c19hbWQ2NC56aXA">frp_0.35.1_windows_amd64.zip</a>，修改 <code>frpc.ini</code> 为以下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = logi.im ; FRP 地址</span><br><span class="line">server_port = 5554    ; FRP 端口</span><br><span class="line">token = your-token    ; FRP 密码</span><br><span class="line">tcp_mux = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[adb]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 192.168.2.177 ; 安卓设备 IP</span><br><span class="line">local_port = 5555        ; 安卓设备 ADB 端口</span><br><span class="line">remote_port = 5555       ; FRP ADB 转发端口</span><br></pre></td></tr></table></figure>
 
-<p>随后在本文件夹打开终端，使用以下命令启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">❯❯  current  17:38 .\frpc.exe -c .\frpc.ini</span><br><span class="line">2021/02/07 17:38:53 [I] [service.go:290] [e325feef865964cc] login to server success, get run <span class="built_in">id</span> [e325feef865964cc], server udp port [0]</span><br><span class="line">2021/02/07 17:38:53 [I] [proxy_manager.go:144] [e325feef865964cc] proxy added: [adb]</span><br><span class="line">2021/02/07 17:38:53 [I] [control.go:180] [e325feef865964cc] [adb] start proxy success</span><br></pre></td></tr></table></figure>
-
-<p>如果客户端有linux环境，也可用服务端同样的方式安装配置，并添加到开机启动.</p>
-</li>
-<li><p>在手机上安装scrcpy软件,ios版本需要付费才能安装，启动软件,通过云服务器5555端口即访问了手机5555端口，实现了将闲置手机转为云手机的操作。</p>
-</li>
-</ol>
-<h1 id="另一种方式利用ReDroid打造自己的云手机"><a href="#另一种方式利用ReDroid打造自己的云手机" class="headerlink" title="另一种方式利用ReDroid打造自己的云手机"></a>另一种方式利用ReDroid打造自己的云手机</h1><ol>
-<li><p>首先需要一台电脑，可用wsl2，安装好ubuntu系统</p>
-</li>
-<li><p>安装docker</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://get.docker.com -o get-docker.sh</span><br><span class="line">sudo sh get-docker.sh</span><br><span class="line"><span class="comment"># 或者从仓库下载都可</span></span><br><span class="line"><span class="comment"># sudo apt-get install -y docker.io</span></span><br><span class="line"><span class="comment"># 启动docker服务</span></span><br><span class="line"><span class="comment"># systemctl start docker</span></span><br><span class="line"><span class="comment"># 设为开户启动</span></span><br><span class="line"><span class="comment"># systemctl enable docker</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li><p>安装ReDroid，根据官方文档</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu 16.04 / 18.04 / 20.04 </span></span><br><span class="line">sudo apt-get install -y git kmod make gcc linux-headers-`<span class="built_in">uname</span> -r` </span><br><span class="line"><span class="comment"># 本环境即 linux-headers-4.15.0-159-generic</span></span><br><span class="line"><span class="comment"># 解压项目 master 分支代码到服务器任意位置</span></span><br><span class="line">sudo make <span class="comment"># build kernel modules </span></span><br><span class="line">sudo make install <span class="comment"># build and install *unsigned* kernel modules</span></span><br></pre></td></tr></table></figure></li>
-<li><p>运行容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了游戏更友好，添加了设备相关参数，scrcpy 5555端口即可实现远程访问手机</span></span><br><span class="line">docker run -itd --<span class="built_in">rm</span> --memory-swappiness=0 \</span><br><span class="line">    --privileged --pull always \</span><br><span class="line">    -v /data:/data \</span><br><span class="line">    -p 5555:5555 \</span><br><span class="line">    redroid/redroid:11.0.0-latest \</span><br><span class="line">    androidboot.hardware=mt6891 ro.secure=0 ro.boot.hwc=GLOBAL ro.ril.oem.imei=861503068361145 ro.ril.oem.imei1=861503068361145 ro.ril.oem.imei2=861503068361148 ro.ril.miui.imei0=861503068361148 ro.product.manufacturer=Xiaomi ro.build.product=chopin \</span><br><span class="line">    redroid.width=720 redroid.height=1280 \</span><br><span class="line">    redroid.gpu.mode=guest</span><br></pre></td></tr></table></figure></li>
-<li><p>完成上面部署后，可通过前面映射端口的方式，将手机设置为云手机</p>
-</li>
-<li><p>如果使用的电脑为wsl2，还需要配置网络</p>
-</li>
-</ol>
 
       
 
@@ -355,7 +289,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -369,18 +303,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          win32创建sshd服务
-        
-      </div>
-    </a>
   
-  
-    <a href="/2024/04/16/win10-%E5%A4%9A%E5%B1%8F%E4%B8%8B%E4%BF%AE%E6%94%B9%E5%88%86%E8%BE%A8%E7%8E%87/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">win10 多屏下修改分辨率</div>
+    <a href="/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">创建自己的云手机</div>
       <i class="icon-circle-right"></i>
     </a>
   

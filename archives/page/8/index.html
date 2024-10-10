@@ -6,19 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://yesir.github.io">
-  <title>创建自己的云手机 | 随笔</title>
+  <title>Archives | 随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid">
-<meta property="og:type" content="article">
-<meta property="og:title" content="创建自己的云手机">
-<meta property="og:url" content="https://yesir.github.io/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="随笔">
+<meta property="og:url" content="https://yesir.github.io/archives/page/8/index.html">
 <meta property="og:site_name" content="随笔">
-<meta property="og:description" content="两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-05-11T07:54:03.000Z">
-<meta property="article:modified_time" content="2024-05-11T07:55:56.927Z">
 <meta property="article:author" content="yesir">
-<meta property="article:tag" content="运维">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="随笔" type="application/atom+xml">
@@ -161,139 +156,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-创建自己的云手机" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      创建自己的云手机
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2021" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/" class="archive-article-date">
+  	<time datetime="2021-10-29T11:28:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-29</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2021/10/29/%E5%AE%89%E8%A3%85%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/">安装交叉编译环境</a>
     </h1>
   
 
-        
-        <a href="/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/" class="archive-article-date">
-  	<time datetime="2024-05-11T07:54:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-05-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>两种方式创建自己的云手机，一：利用旧安卓手机，二：使用ReDroid</p>
-<span id="more"></span>
-
-<h1 id="利用旧安卓手机，制作自己的云手机"><a href="#利用旧安卓手机，制作自己的云手机" class="headerlink" title="利用旧安卓手机，制作自己的云手机"></a>利用旧安卓手机，制作自己的云手机</h1><ol>
-<li><p>首先，下载好scrcpy-win64，并将安装目录添加到系统环境变量</p>
-</li>
-<li><p>其次，手机USB数据线连接电脑，并在手机上打开usb调试</p>
-</li>
-<li><p>接着，执行如下命令：</p>
-</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb tcpip 5555</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>然后，查看手机IP，并拔掉USB数据线：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">adb connect 192.168.1.55:5555</span><br><span class="line"></span><br><span class="line">显示connected 成功后执行命令:</span><br><span class="line"></span><br><span class="line">scrcpy</span><br></pre></td></tr></table></figure>
-
-<ol start="5">
-<li>至此，基本部署均已完成，拖动apk文件到scrcpy手机窗口即可安装应用。</li>
-</ol>
-<h1 id="将手机调试端口通过frp映射到公网"><a href="#将手机调试端口通过frp映射到公网" class="headerlink" title="将手机调试端口通过frp映射到公网"></a>将手机调试端口通过frp映射到公网</h1><ol>
-<li>首先需要一台云服务器，并将防火墙开放tcp：5554 5555端口</li>
-<li>在云服务器上安装frp server端,具体端口配置如下</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th align="center">其它手机或电脑</th>
-<th align="center"></th>
-<th align="center">FRP SERVER</th>
-<th align="center"></th>
-<th align="center">FRP CLIENT</th>
-<th align="center"></th>
-<th align="center">安卓手机</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">5554</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">RAND PORT1</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">RAND PORT</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">5555</td>
-<td align="center"></td>
-<td align="center">RAND PORT2</td>
-<td align="center">&lt;———&gt;</td>
-<td align="center">5555</td>
-</tr>
-</tbody></table>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CentOS 7 x64</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 下载程序并解压</span></span><br><span class="line"><span class="built_in">cd</span> /usr/local/share</span><br><span class="line">curl -LO https://github.com/fatedier/frp/releases/download/v0.35.1/frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line">tar xzvf frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line"><span class="built_in">rm</span> -f frp_0.35.1_linux_amd64.tar.gz</span><br><span class="line"><span class="built_in">mv</span> frp_0.35.1_linux_amd64 frp</span><br><span class="line"><span class="built_in">cd</span> frp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line"><span class="built_in">cat</span> &gt; frps.ini &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[common]</span></span><br><span class="line"><span class="string">bind_port = 5554   ; FRP 端口</span></span><br><span class="line"><span class="string">token = your-token ; FRP 密码</span></span><br><span class="line"><span class="string">tcp_mux = false</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加自启服务</span></span><br><span class="line"><span class="built_in">cat</span> &gt; /etc/systemd/system/frp.service &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">[Unit]</span></span><br><span class="line"><span class="string">Description=Frp Service</span></span><br><span class="line"><span class="string">Requires=network-online.target</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Service]</span></span><br><span class="line"><span class="string">Type=simple</span></span><br><span class="line"><span class="string">PIDFile=/run/frp.pid</span></span><br><span class="line"><span class="string">ExecStart=/usr/local/share/frp/frps -c /usr/local/share/frp/frps.ini</span></span><br><span class="line"><span class="string">Restart=on-failure</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[Install]</span></span><br><span class="line"><span class="string">WantedBy=multi-user.target</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> --now frp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启防火墙</span></span><br><span class="line">firewall-cmd --zone=public --add-port=5554/tcp,5555/tcp --permanent</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li><p>在安卓手机同一网络环境安装frp客户端，下载并解压 <a target="_blank" rel="noopener" href="https://logi.im/go/aHR0cHM6Ly9naXRodWIuY29tL2ZhdGVkaWVyL2ZycC9yZWxlYXNlcy9kb3dubG9hZC92MC4zNS4xL2ZycF8wLjM1LjFfd2luZG93c19hbWQ2NC56aXA">frp_0.35.1_windows_amd64.zip</a>，修改 <code>frpc.ini</code> 为以下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = logi.im ; FRP 地址</span><br><span class="line">server_port = 5554    ; FRP 端口</span><br><span class="line">token = your-token    ; FRP 密码</span><br><span class="line">tcp_mux = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">[adb]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 192.168.2.177 ; 安卓设备 IP</span><br><span class="line">local_port = 5555        ; 安卓设备 ADB 端口</span><br><span class="line">remote_port = 5555       ; FRP ADB 转发端口</span><br></pre></td></tr></table></figure>
-
-<p>随后在本文件夹打开终端，使用以下命令启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">❯❯  current  17:38 .\frpc.exe -c .\frpc.ini</span><br><span class="line">2021/02/07 17:38:53 [I] [service.go:290] [e325feef865964cc] login to server success, get run <span class="built_in">id</span> [e325feef865964cc], server udp port [0]</span><br><span class="line">2021/02/07 17:38:53 [I] [proxy_manager.go:144] [e325feef865964cc] proxy added: [adb]</span><br><span class="line">2021/02/07 17:38:53 [I] [control.go:180] [e325feef865964cc] [adb] start proxy success</span><br></pre></td></tr></table></figure>
-
-<p>如果客户端有linux环境，也可用服务端同样的方式安装配置，并添加到开机启动.</p>
-</li>
-<li><p>在手机上安装scrcpy软件,ios版本需要付费才能安装，启动软件,通过云服务器5555端口即访问了手机5555端口，实现了将闲置手机转为云手机的操作。</p>
-</li>
-</ol>
-<h1 id="另一种方式利用ReDroid打造自己的云手机"><a href="#另一种方式利用ReDroid打造自己的云手机" class="headerlink" title="另一种方式利用ReDroid打造自己的云手机"></a>另一种方式利用ReDroid打造自己的云手机</h1><ol>
-<li><p>首先需要一台电脑，可用wsl2，安装好ubuntu系统</p>
-</li>
-<li><p>安装docker</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://get.docker.com -o get-docker.sh</span><br><span class="line">sudo sh get-docker.sh</span><br><span class="line"><span class="comment"># 或者从仓库下载都可</span></span><br><span class="line"><span class="comment"># sudo apt-get install -y docker.io</span></span><br><span class="line"><span class="comment"># 启动docker服务</span></span><br><span class="line"><span class="comment"># systemctl start docker</span></span><br><span class="line"><span class="comment"># 设为开户启动</span></span><br><span class="line"><span class="comment"># systemctl enable docker</span></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li><p>安装ReDroid，根据官方文档</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Ubuntu 16.04 / 18.04 / 20.04 </span></span><br><span class="line">sudo apt-get install -y git kmod make gcc linux-headers-`<span class="built_in">uname</span> -r` </span><br><span class="line"><span class="comment"># 本环境即 linux-headers-4.15.0-159-generic</span></span><br><span class="line"><span class="comment"># 解压项目 master 分支代码到服务器任意位置</span></span><br><span class="line">sudo make <span class="comment"># build kernel modules </span></span><br><span class="line">sudo make install <span class="comment"># build and install *unsigned* kernel modules</span></span><br></pre></td></tr></table></figure></li>
-<li><p>运行容器</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为了游戏更友好，添加了设备相关参数，scrcpy 5555端口即可实现远程访问手机</span></span><br><span class="line">docker run -itd --<span class="built_in">rm</span> --memory-swappiness=0 \</span><br><span class="line">    --privileged --pull always \</span><br><span class="line">    -v /data:/data \</span><br><span class="line">    -p 5555:5555 \</span><br><span class="line">    redroid/redroid:11.0.0-latest \</span><br><span class="line">    androidboot.hardware=mt6891 ro.secure=0 ro.boot.hwc=GLOBAL ro.ril.oem.imei=861503068361145 ro.ril.oem.imei1=861503068361145 ro.ril.oem.imei2=861503068361148 ro.ril.miui.imei0=861503068361148 ro.product.manufacturer=Xiaomi ro.build.product=chopin \</span><br><span class="line">    redroid.width=720 redroid.height=1280 \</span><br><span class="line">    redroid.gpu.mode=guest</span><br></pre></td></tr></table></figure></li>
-<li><p>完成上面部署后，可通过前面映射端口的方式，将手机设置为云手机</p>
-</li>
-<li><p>如果使用的电脑为wsl2，还需要配置网络</p>
-</li>
-</ol>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>感谢您的支持<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -305,115 +197,24 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://yesir.github.io/2024/05/11/%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E6%89%8B%E6%9C%BA/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          win32创建sshd服务
-        
-      </div>
-    </a>
   
   
-    <a href="/2024/04/16/win10-%E5%A4%9A%E5%B1%8F%E4%B8%8B%E4%BF%AE%E6%94%B9%E5%88%86%E8%BE%A8%E7%8E%87/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">win10 多屏下修改分辨率</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/page/7/">上一页</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/6/">6</a><a class="page-number" href="/archives/page/7/">7</a><span class="page-number current">8</span>
+    </nav>
   
 
-  
-
-  
 
 
           </div>
@@ -436,8 +237,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

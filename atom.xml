@@ -6,7 +6,7 @@
   <link href="https://yesir.github.io/atom.xml" rel="self"/>
   
   <link href="https://yesir.github.io/"/>
-  <updated>2024-05-11T07:55:56.927Z</updated>
+  <updated>2024-10-09T09:05:01.666Z</updated>
   <id>https://yesir.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>win32创建sshd服务</title>
+    <link href="https://yesir.github.io/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/"/>
+    <id>https://yesir.github.io/2024/10/09/win32%E5%88%9B%E5%BB%BAsshd%E6%9C%8D%E5%8A%A1/</id>
+    <published>2024-10-09T08:45:46.000Z</published>
+    <updated>2024-10-09T09:05:01.666Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>1、获取所需的Openssh文件,微软的PowerShell团队已经支持openssh，所以安装文件我们可以在github的powershell团队项目下进行下载<br>下载地址： <a href="https://github.com/PowerShell/Win32-OpenSSH/releases">https://github.com/PowerShell/Win32-OpenSSH/releases</a><br>根据你自己的系统对应下载</p></blockquote><blockquote><p>2、安装OpenSSH<br>这一步非常简单，只用把下载好的压缩文件解压出来即可。<br>首先已经下载好OpenSSH，并且进行解压<br>把OpenSSH整个目录进行复制到 C:\Program Files (其实哪个目录都可以，不过建议安装在这里，免得出问题)</p></blockquote><blockquote><p>3、配置参数<br>单击计算机，右键 –&gt; 属性 –&gt; 高级系统设置 –&gt; 环境变量–系统变量，在此框里面找到 Path 进行编辑，windows7系统编辑时候是以文本形式，所以就需要在最后先添加 “； ” 英文分号��再把你安装路径 如 C:\Program Files\OpenSSH-Win64 粘贴进去。windows 10系统添加比较方便，进到Path里面���点击-新建直接粘贴进去！</p></blockquote><blockquote><p>4、发布ssh服务<br>打开系统CMD界面依次执行一下命令</p></blockquote><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">shd服务</span><br><span class="line">powershell.exe -ExecutionPolicy Bypass -File install-sshd.ps1</span><br><span class="line"></span><br><span class="line">2）开放22号端口（如果你在windows关闭了防火墙并配置了入站规则可以不执行如下命令，多执行不影响）</span><br><span class="line">netsh advfirewall firewall add rule name=sshd dir=in action=allow protocol=TCP localport=22</span><br><span class="line"></span><br><span class="line">3）配置开机自启sshd服务</span><br><span class="line">sc config sshd start= auto</span><br><span class="line"></span><br><span class="line">4) 开启服务</span><br><span class="line">net start sshd</span><br><span class="line"></span><br><span class="line">第一次安装完服务之后还需要手动打开一下服务，后面配置过自启之后就不用管了。</span><br><span class="line"></span><br><span class="line">5）验证一下端口</span><br><span class="line">打开cmd，使用netstat -an命令查看一下本机的22端口是否被监听。</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;1、获取所需的Openssh文件,微软的PowerShell团队已经支持openssh，所以安装文件我们可以在github的powershell团队项目下进行下载&lt;br&gt;下载地址： &lt;a href=&quot;https://github.com/Power</summary>
+      
+    
+    
+    
+    
+    <category term="运维" scheme="https://yesir.github.io/tags/%E8%BF%90%E7%BB%B4/"/>
+    
+  </entry>
   
   <entry>
     <title>创建自己的云手机</title>
@@ -371,25 +394,6 @@
     
     
     <summary type="html">&lt;p&gt;使用&lt;code&gt;std::vector&lt;/code&gt;来实现环形队列&lt;/p&gt;</summary>
-    
-    
-    
-    
-    <category term="C/C++" scheme="https://yesir.github.io/tags/C-C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>C++单例模式模板类</title>
-    <link href="https://yesir.github.io/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/"/>
-    <id>https://yesir.github.io/2023/03/09/C-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%A8%A1%E6%9D%BF%E7%B1%BB/</id>
-    <published>2023-03-09T00:41:59.000Z</published>
-    <updated>2023-03-09T00:54:29.381Z</updated>
-    
-    <content type="html"><![CDATA[<p>记录C++单例模式，模板方法类</p><span id="more"></span><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ifndef SINGLETON_HPP</span></span><br><span class="line"><span class="comment">#define SINGLETON_HPP</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#include &lt;stdexcept&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#define NON_COPYABLE(T) \</span></span><br><span class="line">  T(const T &amp;); \</span><br><span class="line">  T &amp;operator=(const T &amp;)</span><br><span class="line"></span><br><span class="line"><span class="comment">#define NON_MOVEABLE(T) \</span></span><br><span class="line">  T(T &amp;&amp;); \</span><br><span class="line">  T &amp;operator=(T &amp;&amp;)</span><br><span class="line"></span><br><span class="line">template&lt; typename T &gt;</span><br><span class="line">class Singleton</span><br><span class="line">&#123;</span><br><span class="line">  static T *_ptr;</span><br><span class="line">  </span><br><span class="line">  NON_COPYABLE(Singleton);</span><br><span class="line">  NON_MOVEABLE(Singleton);</span><br><span class="line">  </span><br><span class="line">public:</span><br><span class="line">  template&lt; typename... Args &gt;</span><br><span class="line">  static void createInstance(Args&amp;&amp;... args)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (_ptr)</span><br><span class="line">      <span class="built_in">return</span>;</span><br><span class="line"></span><br><span class="line">    _ptr = new T(std::forward&lt; Args &gt;(args)...);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  static void <span class="function"><span class="title">deleteInstance</span></span>()</span><br><span class="line">  &#123;</span><br><span class="line">    delete _ptr;</span><br><span class="line">    _ptr = nullptr;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  static bool <span class="function"><span class="title">hasInstance</span></span>()</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">return</span> _ptr;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  static T &amp;<span class="function"><span class="title">instance</span></span>()</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (!_ptr)</span><br><span class="line">      throw std::runtime_error(<span class="string">&quot;Singleton&lt; T &gt;::createInstance missing&quot;</span>);</span><br><span class="line">     </span><br><span class="line">    <span class="built_in">return</span> *_ptr;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  Singleton &amp;operator==(const Singleton &amp;) = delete;</span><br><span class="line">  Singleton &amp;operator==(Singleton &amp;&amp;) = delete;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">template&lt; typename T &gt; T *Singleton&lt; T &gt;::_ptr = nullptr;</span><br><span class="line"></span><br><span class="line"><span class="comment">#define CREATE_INSTANCE(T, ...) Singleton&lt; T &gt;::createInstance(__VA_ARGS__)</span></span><br><span class="line"><span class="comment">#define DELETE_INSTANCE(T, ...) Singleton&lt; T &gt;::deleteInstance()</span></span><br><span class="line"><span class="comment">#define INSTANCE(T) Singleton&lt; T &gt;::instance()</span></span><br><span class="line"><span class="comment">#define HAS_INSTANCE(T) Singleton&lt; T &gt;::hasInstance()</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#endif</span></span><br><span class="line"></span><br></pre></td></tr></table></figure><p>使用方法</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">explicit A();</span><br><span class="line">public:</span><br><span class="line">void get();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main(int argc, char* argv[])</span><br><span class="line">&#123;</span><br><span class="line">CREATE_INSTANCE(A);</span><br><span class="line">INSTANCE(A).get();</span><br><span class="line">    DELETE_INSTANCE(A);</span><br><span class="line"><span class="built_in">return</span> 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-    
-    
-    <summary type="html">&lt;p&gt;记录C++单例模式，模板方法类&lt;/p&gt;</summary>
     
     
     
