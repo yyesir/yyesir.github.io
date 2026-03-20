@@ -16,7 +16,7 @@
 <meta property="og:description" content="ssh通常用来远程登陆，它是加密的，远程主机允许ssh登陆，需要安装或开启sshd服务。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-10-30T01:38:27.000Z">
-<meta property="article:modified_time" content="2021-10-30T02:13:29.000Z">
+<meta property="article:modified_time" content="2026-03-20T02:31:09.687Z">
 <meta property="article:author" content="yesir">
 <meta property="article:tag" content="随笔">
 <meta name="twitter:card" content="summary">
@@ -202,6 +202,7 @@
 <p><code>ssh -qTfnN -D 0.0.0.0:7070 root@server</code></p>
 <p>在本机设置<code>sock5</code>代理为<code>127.0.0.1：7070</code>即可实现代理功能。</p>
 <p>在国内可用此方法实现<code>FQ</code></p>
+<h2 id="ssh免密码登陆"><a href="#ssh免密码登陆" class="headerlink" title="ssh免密码登陆"></a><code>ssh</code>免密码登陆</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">方法一:</span><br><span class="line"><span class="built_in">cat</span> ~/.ssh/id_ed25519.pub | ssh user@server_ip <span class="string">&quot;mkdir -p ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys&quot;</span></span><br><span class="line"></span><br><span class="line">方法二:</span><br><span class="line">ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server_ip</span><br></pre></td></tr></table></figure>
 
       
 
